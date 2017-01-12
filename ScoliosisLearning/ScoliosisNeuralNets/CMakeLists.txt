@@ -22,6 +22,7 @@ include(${Slicer_USE_FILE})
 add_subdirectory(CenterAndNormalizeLandmarks)
 add_subdirectory(DegradeTransverseProcesses)
 add_subdirectory(ExtendSpine)
+add_subdirectory(RepairMissingPoints)
 ## NEXT_MODULE
 
 #-----------------------------------------------------------------------------
