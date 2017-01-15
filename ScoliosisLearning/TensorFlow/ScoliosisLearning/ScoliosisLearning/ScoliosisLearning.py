@@ -1,11 +1,11 @@
-import tensorflow as tf
+﻿import tensorflow as tf
 import numpy as np
 import scipy as sp
 import importlib as il
 import math, csv, os
 
 DataSet = 'ControlSets'
-DataDir = 'Data/' + DataSet + '/NormalizedCompletedErrors/'
+DataDir = 'C:/Users/Ben/Documents/Masters16_17/Winter2017/ScoliosisLearning/TensorFlow/Data/' + DataSet + '/NormalizedCompletedErrors/'
 DataFiles = []
 
 Vertebrae = ['T1','T2','T3','T4','T5','T6','T7','T8','T9','T10','T11','T12','L1','L2','L3','L4','L5']
@@ -31,7 +31,7 @@ def ReadData():
       DataRows = []
       BeginTranscribe = False
       for row in DataReader:
-        #print(row)
+        print(row)
         if row[0] == '1':
           BeginTranscribe = True
         if BeginTranscribe:
@@ -54,7 +54,7 @@ def ReadData():
       else:
         LandmarkData[-1][-1].append(LandmarkPoint)        # 3rd: right coord
         #print(LandmarkData[-1][-1])
-    print('')
+    #print('')
     
 def MeasureAngles():
   for Patient in LandmarkData:
@@ -82,7 +82,18 @@ def MeasureAngles():
       TrueCurveCritVert.append([-Angle, MinVertebra, MaxVertebra])
     else:
       TrueCurveCritVert.append([Angle, MaxVertebra, MinVertebra])
-    print(TrueCurveCritVert[-1])
+    #print(TrueCurveCritVert[-1])
     
 def IdentifyMissingPointsLabels():
-  for LandmarkSet in LandmarkData
+  MissingLandmarks = []
+  for Patient in LandmarkData:
+    MissingLandmarks.append([])
+    print('')
+    for i, Vertebra in enumerate(Patient):
+      MissingLandmarks[-1].append([])
+      for Side in Vertebra[1:]:
+        if Side[0] == None:
+          MissingLandmarks[-1][-1].append(1)
+        else:
+          MissingLandmarks[-1][-1].append(0)
+      print(Vertebrae[i], MissingLandmarks[-1][-1])
