@@ -1,6 +1,6 @@
 class TextReader:
   DataDir = '../Data/txt/'
-  InputFileName = 'trial.txt'
+  InputFileName = 'AllVulnerabilities.txt'
   OutputFileName = 'IDsWithDescriptions.csv'
   
   def __init__(self):
@@ -10,7 +10,7 @@ class TextReader:
     
   def main(self):
     import csv
-    with open(self.DataDir + self.InputFileName) as f:
+    with open(self.DataDir + self.InputFileName, encoding='utf-8') as f:
       reader = csv.reader(f, quotechar=None)
       Describing = False
       for line in reader:
