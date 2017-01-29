@@ -1,0 +1,15 @@
+# Markups fiducial file version = 4.7
+# CoordinateSystem = 0
+# columns = id,x,y,z,ow,ox,oy,oz,vis,sel,lock,label,desc,associatedNodeID
+vtkMRMLMarkupsFiducialNode_462,-31.6181,-31.9675,-40.0915,0,0,0,1,1,1,0,T4L,,
+vtkMRMLMarkupsFiducialNode_463,28.6701,-29.1627,-34.734,0,0,0,1,1,1,0,T4R,,
+vtkMRMLMarkupsFiducialNode_464,-31.188,-47.3443,-83.7158,0,0,0,1,1,1,0,T6L,,
+vtkMRMLMarkupsFiducialNode_465,33.7715,-45.3986,-81.7744,0,0,0,1,1,1,0,T6R,,
+vtkMRMLMarkupsFiducialNode_466,-28.8463,-65.2283,-136.083,0,0,0,1,1,1,0,T8L,,
+vtkMRMLMarkupsFiducialNode_467,34.4738,-62.2328,-137.337,0,0,0,1,1,1,0,T8R,,
+vtkMRMLMarkupsFiducialNode_468,-31.8219,-69.2205,-191.975,0,0,0,1,1,1,0,T10L,,
+vtkMRMLMarkupsFiducialNode_469,27.4285,-65.8194,-194.612,0,0,0,1,1,1,0,T10R,,
+vtkMRMLMarkupsFiducialNode_470,-31.0876,-54.7209,-253.937,0,0,0,1,1,1,0,T12L,,
+vtkMRMLMarkupsFiducialNode_471,12.5359,-48.4607,-258.303,0,0,0,1,1,1,0,T12R,,
+vtkMRMLMarkupsFiducialNode_472,-48.7351,-32.0217,-312.253,0,0,0,1,1,1,0,L2L,,
+vtkMRMLMarkupsFiducialNode_473,15.5034,-21.9904,-314.55,0,0,0,1,1,1,0,L2R,,

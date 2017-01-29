@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<VTKFile type="vtkMultiBlockDataSet" version="1.0" byte_order="LittleEndian" header_type="UInt32" compressor="vtkZLibDataCompressor">
+  <vtkMultiBlockDataSet>
+    <DataSet index="0" file="RegistrationsTwoThirds.seg/RegistrationsTwoThirds.seg_0.vtp">
+    </DataSet>
+    <DataSet index="1" file="RegistrationsTwoThirds.seg/RegistrationsTwoThirds.seg_1.vtp">
+    </DataSet>
+    <DataSet index="2" file="RegistrationsTwoThirds.seg/RegistrationsTwoThirds.seg_2.vtp">
+    </DataSet>
+    <DataSet index="3" file="RegistrationsTwoThirds.seg/RegistrationsTwoThirds.seg_3.vtp">
+    </DataSet>
+    <DataSet index="4" file="RegistrationsTwoThirds.seg/RegistrationsTwoThirds.seg_4.vtp">
+    </DataSet>
+    <DataSet index="5" file="RegistrationsTwoThirds.seg/RegistrationsTwoThirds.seg_5.vtp">
+    </DataSet>
+    <DataSet index="6" file="RegistrationsTwoThirds.seg/RegistrationsTwoThirds.seg_6.vtp">
+    </DataSet>
+    <DataSet index="7" file="RegistrationsTwoThirds.seg/RegistrationsTwoThirds.seg_7.vtp">
+    </DataSet>
+    <DataSet index="8" file="RegistrationsTwoThirds.seg/RegistrationsTwoThirds.seg_8.vtp">
+    </DataSet>
+    <DataSet index="9" file="RegistrationsTwoThirds.seg/RegistrationsTwoThirds.seg_9.vtp">
+    </DataSet>
+    <DataSet index="10" file="RegistrationsTwoThirds.seg/RegistrationsTwoThirds.seg_10.vtp">
+    </DataSet>
+    <DataSet index="11" file="RegistrationsTwoThirds.seg/RegistrationsTwoThirds.seg_11.vtp">
+    </DataSet>
+    <DataSet index="12" file="RegistrationsTwoThirds.seg/RegistrationsTwoThirds.seg_12.vtp">
+    </DataSet>
+  </vtkMultiBlockDataSet>
+</VTKFile>
