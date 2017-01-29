@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<VTKFile type="vtkMultiBlockDataSet" version="1.0" byte_order="LittleEndian" header_type="UInt32" compressor="vtkZLibDataCompressor">
+  <vtkMultiBlockDataSet>
+    <DataSet index="0" file="RegistrationsThird.seg/RegistrationsThird.seg_0.vtp">
+    </DataSet>
+    <DataSet index="1" file="RegistrationsThird.seg/RegistrationsThird.seg_1.vtp">
+    </DataSet>
+    <DataSet index="2" file="RegistrationsThird.seg/RegistrationsThird.seg_2.vtp">
+    </DataSet>
+    <DataSet index="3" file="RegistrationsThird.seg/RegistrationsThird.seg_3.vtp">
+    </DataSet>
+    <DataSet index="4" file="RegistrationsThird.seg/RegistrationsThird.seg_4.vtp">
+    </DataSet>
+    <DataSet index="5" file="RegistrationsThird.seg/RegistrationsThird.seg_5.vtp">
+    </DataSet>
+    <DataSet index="6" file="RegistrationsThird.seg/RegistrationsThird.seg_6.vtp">
+    </DataSet>
+    <DataSet index="7" file="RegistrationsThird.seg/RegistrationsThird.seg_7.vtp">
+    </DataSet>
+    <DataSet index="8" file="RegistrationsThird.seg/RegistrationsThird.seg_8.vtp">
+    </DataSet>
+    <DataSet index="9" file="RegistrationsThird.seg/RegistrationsThird.seg_9.vtp">
+    </DataSet>
+    <DataSet index="10" file="RegistrationsThird.seg/RegistrationsThird.seg_10.vtp">
+    </DataSet>
+    <DataSet index="11" file="RegistrationsThird.seg/RegistrationsThird.seg_11.vtp">
+    </DataSet>
+    <DataSet index="12" file="RegistrationsThird.seg/RegistrationsThird.seg_12.vtp">
+    </DataSet>
+  </vtkMultiBlockDataSet>
+</VTKFile>
