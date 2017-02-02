@@ -3,20 +3,19 @@ import unittest
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 import logging
-import numpy
 
 #
-# Danielle
+# Rachel
 #
 
-class Danielle(ScriptedLoadableModule):
+class Rachel(ScriptedLoadableModule):
   """Uses ScriptedLoadableModule base class, available at:
   https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
   """
 
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
-    self.parent.title = "Danielle" # TODO make this more human readable by adding spaces
+    self.parent.title = "Rachel" # TODO make this more human readable by adding spaces
     self.parent.categories = ["Examples"]
     self.parent.dependencies = []
     self.parent.contributors = ["John Doe (AnyWare Corp.)"] # replace with "Firstname Lastname (Organization)"
@@ -30,10 +29,10 @@ class Danielle(ScriptedLoadableModule):
 """ # replace with organization, grant and thanks.
 
 #
-# DanielleWidget
+# RachelWidget
 #
 
-class DanielleWidget(ScriptedLoadableModuleWidget):
+class RachelWidget(ScriptedLoadableModuleWidget):
   """Uses ScriptedLoadableModuleWidget base class, available at:
   https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
   """
@@ -128,16 +127,16 @@ class DanielleWidget(ScriptedLoadableModuleWidget):
     self.applyButton.enabled = self.inputSelector.currentNode() and self.outputSelector.currentNode()
 
   def onApplyButton(self):
-    logic = DanielleLogic()
+    logic = RachelLogic()
     enableScreenshotsFlag = self.enableScreenshotsFlagCheckBox.checked
     imageThreshold = self.imageThresholdSliderWidget.value
     logic.run(self.inputSelector.currentNode(), self.outputSelector.currentNode(), imageThreshold, enableScreenshotsFlag)
 
 #
-# DanielleLogic
+# RachelLogic
 #
 
-class DanielleLogic(ScriptedLoadableModuleLogic):
+class RachelLogic(ScriptedLoadableModuleLogic):
   """This class should implement all the actual
   computation done by your module.  The interface
   should be such that other python code can import
@@ -228,14 +227,14 @@ class DanielleLogic(ScriptedLoadableModuleLogic):
 
     # Capture screenshot
     if enableScreenshots:
-      self.takeScreenshot('DanielleTest-Start','MyScreenshot',-1)
+      self.takeScreenshot('RachelTest-Start','MyScreenshot',-1)
 
     logging.info('Processing completed')
 
     return True
 
 
-class DanielleTest(ScriptedLoadableModuleTest):
+class RachelTest(ScriptedLoadableModuleTest):
   """
   This is the test case for your scripted module.
   Uses ScriptedLoadableModuleTest base class, available at:
@@ -251,29 +250,65 @@ class DanielleTest(ScriptedLoadableModuleTest):
     """Run as few or as many tests as needed here.
     """
     self.setUp()
-    self.test_Danielle1()
+    self.test_Rachel1()
 
-  def test_Danielle1(self):
+  def test_Rachel1(self):
+    """ Ideally you should have several levels of tests.  At the lowest level
+    tests should exercise the functionality of the logic with different inputs
+    (both valid and invalid).  At higher levels your tests should emulate the
+    way the user would interact with your code and confirm that it still works
+    the way you intended.
+    One of the most important features of the tests is that it should alert other
+    developers when their changes will have an impact on the behavior of your
+    module.  For example, if a developer removes a feature that you depend on,
+    your test should break so they know that the feature is needed.
+    """
+
+    self.delayDisplay("Starting the test")
+    #
+    # first, get some data
+    #
+    """import urllib
+    downloads = (
+        ('http://slicer.kitware.com/midas3/download?items=5767', 'FA.nrrd', slicer.util.loadVolume),
+        )
+    for url,name,loader in downloads:
+      filePath = slicer.app.temporaryPath + '/' + name
+      if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
+        logging.info('Requesting download %s from %s...\n' % (name, url))
+        urllib.urlretrieve(url, filePath)
+      if loader:
+        logging.info('Loading %s...' % (name,))
+        loader(filePath)
+    self.delayDisplay('Finished with download and loading')
+    volumeNode = slicer.util.getNode(pattern="FA")
+    logic = RachelLogic()
+    self.assertIsNotNone( logic.hasImageData(volumeNode) )"""
+    
+    #code for homework due January 24
+
     referenceToRas = slicer.vtkMRMLLinearTransformNode()
     referenceToRas.SetName('ReferenceToRas')
     slicer.mrmlScene.AddNode(referenceToRas)
+
+    #code for homework due January 26
 
     alphaPoints = vtk.vtkPoints()
     betaPoints = vtk.vtkPoints()
 
     alphaFids = slicer.vtkMRMLMarkupsFiducialNode()
-    alphaFids.SetName('ReferencePoints')
+    alphaFids.SetName('RasPoints')
     slicer.mrmlScene.AddNode(alphaFids)
 
     betaFids = slicer.vtkMRMLMarkupsFiducialNode()
-    betaFids.SetName('RasPoints')
+    betaFids.SetName('ReferencePoints')
     slicer.mrmlScene.AddNode(betaFids)
     betaFids.GetDisplayNode().SetSelectedColor(1,1,0)
 
     N = 10
     Sigma = 2
-    Scale = 50
-    fromNormCoordinates = numpy.random.rand(N, 3)
+    Scale = 100.0
+    fromNormCoordinates = numpy.random.rand(N, 3) # An array of random numbers
     noise = numpy.random.normal(0.0, Sigma, N*3)
     for i in range(N):
       x = (fromNormCoordinates[i, 0] - 0.5) * Scale
@@ -287,6 +322,8 @@ class DanielleTest(ScriptedLoadableModuleTest):
       betaFids.AddFiducial(xx, yy, zz)
       betaPoints.InsertNextPoint(xx, yy, zz)
 
+    #code for homework due January 27
+
     createModelsLogic = slicer.modules.createmodels.logic()
     rasCoordinateModel = createModelsLogic.CreateCoordinate(25, 2)
     rasCoordinateModel.SetName('RasCoordinateModel')
@@ -296,21 +333,23 @@ class DanielleTest(ScriptedLoadableModuleTest):
     referenceCoordinateModel.GetDisplayNode().SetColor(0, 0, 1)
 
     referenceCoordinateModel.SetAndObserveTransformNodeID(referenceToRas.GetID())
-
+    
+    #code for homework due January 31
+    
     landmarkTransform = vtk.vtkLandmarkTransform()
     landmarkTransform.SetSourceLandmarks(alphaPoints)
     landmarkTransform.SetTargetLandmarks(betaPoints)
     landmarkTransform.SetModeToRigidBody()
     landmarkTransform.Update()
 
-    rasToReferenceMatrix = vtk.vtkMatrix4x4()
-    landmarkTransform.GetMatrix(rasToReferenceMatrix)
+    alphaToBetaMatrix = vtk.vtkMatrix4x4()
+    landmarkTransform.GetMatrix(alphaToBetaMatrix)
 
-    det = rasToReferenceMatrix.Determinant()
+    det = alphaToBetaMatrix.Determinant()
     if det < 1e-8:
         print 'Unstable registration. Check input for collinear points.'
 
-    referenceToRas.SetMatrixTransformToParent(rasToReferenceMatrix)
+    referenceToRas.SetMatrixTransformToParent(alphaToBetaMatrix)
 
     average = 0.0
     numbersSoFar = 0
@@ -320,7 +359,7 @@ class DanielleTest(ScriptedLoadableModuleTest):
         a = alphaPoints.GetPoint(i)
         pointA_Alpha = numpy.array(a)
         pointA_Alpha = numpy.append(pointA_Alpha, 1)
-        pointA_Beta = rasToReferenceMatrix.MultiplyFloatPoint(pointA_Alpha)
+        pointA_Beta = alphaToBetaMatrix.MultiplyFloatPoint(pointA_Alpha)
         b = betaPoints.GetPoint(i)
         pointB_Beta = numpy.array(b)
         pointB_Beta = numpy.append(pointB_Beta, 1)
@@ -328,8 +367,12 @@ class DanielleTest(ScriptedLoadableModuleTest):
         average = average + (distance - average) / numbersSoFar
 
     print "Average distance after registration: " + str(average)
+    
+    #code for homework due February 2
 
     targetPoint_Reference = numpy.array([0,0,0,1])
     targetPoint_Ras = rasToReferenceMatrix.MultiplyFloatPoint(targetPoint_Reference)
     d = numpy.linalg.norm(targetPoint_Reference - targetPoint_Ras)
     print "TRE: " + str(d)
+
+    self.delayDisplay('Test passed!')
