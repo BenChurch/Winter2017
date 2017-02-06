@@ -7,36 +7,176 @@ import logging
 #
 # Helicopter class
 #
-class Helicopter(Name):
-  def __init__(self):
+class Helicopter():
+  def __init__(self, Name):
     print "Helicopter " + Name + " initialized"
+    #self.Gravity = 9.8
+    self.MaxEnginePower = 10000  # Maximum thrust which can be exerted at the MainRotor (kgs)
+    self.MaxTailPower = 1000    # Maximum thrust from tail fan, in either direction (kgs)
+    self.MaxRotorTilt = 15    # Maximum angle the main rotor can be tilted in cyclic steering (deg)
     
-  def Build(self, FuselageMass, FuselageRadius, TailBoomMass, TailBoomLength, TailBoomRadius, RotorCylinderMass, RotorCylinderLength, RotorCylinderInnerRadius, RotorCylinderOuterRadius, MainRotorMass, MainRotorRadius, TailRotorMass, TailRotorRadius):
-    self.CreateGeomtricModel(FuselageRadius,  TailBoomLength, TailBoomRadius, RotorCylinderLength, RotorCylinderInnerRadius, RotorCylinderOuterRadius, MainRotorRadius, TailRotorRadius)
-
-  def CreateGeomtricModel(FuselageRadius,  TailBoomLength, TailBoomRadius, RotorCylinderLength, RotorCylinderInnerRadius, RotorCylinderOuterRadius, MainRotorRadius, TailRotorRadius):
+  def Build(self, FuselageMass, FuselageRadius, TailBoomMass, TailBoomLength, TailBoomRadius, RotorCylinderMass, RotorCylinderLength, RotorCylinderInnerRadius, RotorCylinderOuterRadius, MainRotorMass, MainRotorRadius, TailRotorMass, TailRotorRadius, CreateComponentAxesIsChecked, CreateHelicopterAxesIsChecked):
+    self.CreateGeomtricModel(FuselageRadius,  TailBoomLength, TailBoomRadius, RotorCylinderLength, RotorCylinderInnerRadius, RotorCylinderOuterRadius, MainRotorRadius, TailRotorRadius, CreateComponentAxesIsChecked)
+    self.ComputeDynamicsProperties(FuselageMass, FuselageRadius, TailBoomMass, TailBoomLength, TailBoomRadius, RotorCylinderMass, RotorCylinderLength, RotorCylinderInnerRadius, RotorCylinderOuterRadius, MainRotorMass, MainRotorRadius, TailRotorMass, TailRotorRadius, CreateHelicopterAxesIsChecked)
+    
+  def CreateGeomtricModel(self, FuselageRadius,  TailBoomLength, TailBoomRadius, RotorCylinderLength, RotorCylinderInnerRadius, RotorCylinderOuterRadius, MainRotorRadius, TailRotorRadius, CreateAxesIsChecked=False):
     CreateModelsLogic = slicer.modules.createmodels.logic()
     
     # Fuselage
     self.FuselageGeometricModel = CreateModelsLogic.CreateSphere(FuselageRadius)
     self.FuselageGeometricModel.SetName("Fuselage")
-    self.FuselageAxes = CreateModelsLogic.CreateCoordinate(FuselageRadius * 2, FuselageRadius / 5)
+    # All following pieces are constructed relative to center of fuselage. Fuselage will then be transformed relative to Heli center of mass
+    FuselageToCOMTransform = vtk.vtkMatrix4x4() # Unknown at this point, must instantiate and compute part properties first
+    FuselageToCOMNode = slicer.vtkMRMLTransformNode()
+    # Set as parent once transform matrix is populated
 
     # Tail boom
     self.TailBoomGeometricModel = CreateModelsLogic.CreateCylinder(TailBoomLength, TailBoomRadius)
+    self.TailBoomGeometricModel.SetName("TailBoom")
+    FuselageToBoomAssemblyRotation = vtk.vtkMatrix4x4()
+    FuselageToBoomAssemblyRotation.Zero()
+    FuselageToBoomAssemblyRotation.SetElement(0, 2, -1)
+    FuselageToBoomAssemblyRotation.SetElement(2, 0, 1)
+    FuselageToBoomAssemblyRotation.SetElement(1, 1, 1)
+    FuselageToBoomAssemblyRotation.SetElement(3, 3, 1)
+    self.FuselageToBoomAlignment = slicer.vtkMRMLTransformNode()
+    self.FuselageToBoomAlignment.SetAndObserveMatrixTransformToParent(FuselageToBoomAssemblyRotation)
+    self.FuselageToBoomAlignment.SetName("FuselageBoomAlignment")
+    slicer.mrmlScene.AddNode(self.FuselageToBoomAlignment)
+    self.TailBoomGeometricModel.ApplyTransform(self.FuselageToBoomAlignment.GetTransformToParent())
+    self.TailBoomGeometricModel.HardenTransform()
+    
     FuselageToBoomAssemblyTransform = vtk.vtkMatrix4x4()
     FuselageToBoomAssemblyTransform.SetElement(0, 3, -1 * (FuselageRadius + TailBoomLength / 2))
-    FuselageToBoomAssemblyTransform.SetElement(0, 2, -1)
-    FuselageToBoomAssemblyTransform.SetElement(2, 0, 1)
-    BoomToFuselageNode = slicer.vtkMRMLTransformNode()
-    BoomToFuselageNode.SetAndObserveMatrixTransformToParent(FuselageToBoomAssemblyTransform)
+    FuselageBoomAssembly = slicer.vtkMRMLTransformNode()
+    FuselageBoomAssembly.SetName("FuselageBoomAssembly")
+    FuselageBoomAssembly.SetAndObserveMatrixTransformToParent(FuselageToBoomAssemblyTransform)
+    slicer.mrmlScene.AddNode(FuselageBoomAssembly)
+    self.TailBoomGeometricModel.ApplyTransform(FuselageBoomAssembly.GetTransformToParent())
+    self.TailBoomGeometricModel.HardenTransform()
     
     # Rotor cylinder
     self.RotorCylinderGeometricModel = CreateModelsLogic.CreateCylinder(RotorCylinderLength, RotorCylinderOuterRadius)
-    BoomToCylinderAssemblyTransform = vtk.vtkMatrix4x4()
-    BoomToCylinderAssemblyTransform.SetElement(1,2,1)
-    BoomToCylinderAssemblyTransform.SetElement(2,1,-1)
-    BoomToCylinderAssemblyTransform.SetElement(2,3,-1 * (FuselageRadius + TailBoomLength + RotorCylinderOuterRadius/2))
+    self.RotorCylinderGeometricModel.SetName('RotorCylinder')
+    FuselageToCylinderAssemblyRotation = vtk.vtkMatrix4x4()
+    FuselageToCylinderAssemblyRotation.Zero()
+    FuselageToCylinderAssemblyRotation.SetElement(0, 0, 1)
+    FuselageToCylinderAssemblyRotation.SetElement(1, 2, 1)
+    FuselageToCylinderAssemblyRotation.SetElement(2, 1, -1)
+    FuselageToCylinderAlignment = slicer.vtkMRMLTransformNode()
+    FuselageToCylinderAlignment.SetName('FuselageCylinderAlignment')
+    slicer.mrmlScene.AddNode(FuselageToCylinderAlignment)
+    FuselageToCylinderAlignment.SetAndObserveMatrixTransformToParent(FuselageToCylinderAssemblyRotation)
+    self.RotorCylinderGeometricModel.ApplyTransform(FuselageToCylinderAlignment.GetTransformToParent())
+    
+    FuselageToCylinderAssemblyTransform = vtk.vtkMatrix4x4()
+    FuselageToCylinderAssemblyTransform.SetElement(0, 3, -1 * (FuselageRadius + TailBoomLength + RotorCylinderOuterRadius))
+    FuselageToCylinderNode = slicer.vtkMRMLTransformNode()
+    FuselageToCylinderNode.SetName('FuselageToCylinder')
+    FuselageToCylinderNode.SetAndObserveMatrixTransformToParent(FuselageToCylinderAssemblyTransform)
+    slicer.mrmlScene.AddNode(FuselageToCylinderNode)
+    self.RotorCylinderGeometricModel.ApplyTransform(FuselageToCylinderNode.GetTransformToParent())
+    self.RotorCylinderGeometricModel.HardenTransform()
+    
+    # Main rotor blade
+    self.MainRotorGeometricModel = CreateModelsLogic.CreateCylinder(FuselageRadius / 50, MainRotorRadius)
+    self.MainRotorGeometricModel.SetName("MainRotor")
+    FuselageToMainRotorAssemblyTransform = vtk.vtkMatrix4x4()
+    FuselageToMainRotorAssemblyTransform.SetElement(2, 3, FuselageRadius)
+    FuselageToMainRotorNode = slicer.vtkMRMLTransformNode()
+    FuselageToMainRotorNode.SetName("FuselageToRotor")
+    FuselageToMainRotorNode.SetAndObserveMatrixTransformToParent(FuselageToMainRotorAssemblyTransform)
+    slicer.mrmlScene.AddNode(FuselageToMainRotorNode)
+    self.MainRotorGeometricModel.ApplyTransform(FuselageToMainRotorNode.GetTransformToParent())
+    self.MainRotorGeometricModel.HardenTransform()
+    
+    # Tail rotor blade
+    self.TailRotorGeometricModel = CreateModelsLogic.CreateCylinder(FuselageRadius / 50, TailRotorRadius)
+    self.TailRotorGeometricModel.SetName('TailRotor')
+    FuselageToTailRotorAlignement = FuselageToCylinderAlignment
+    self.TailRotorGeometricModel.ApplyTransform(FuselageToTailRotorAlignement.GetTransformToParent())
+    self.TailRotorGeometricModel.HardenTransform()
+    FuselageToTailNode = FuselageToCylinderNode
+    FuselageToTailNode.SetName('FuselageToTailRotor')
+    self.TailRotorGeometricModel.ApplyTransform(FuselageToTailNode.GetTransformToParent())
+    self.TailRotorGeometricModel.HardenTransform()
+    
+    if CreateAxesIsChecked:
+      self.FuselageAxes = CreateModelsLogic.CreateCoordinate(FuselageRadius * 2, FuselageRadius / 5)
+      self.FuselageAxes.SetName("FuselageAxes")
+      
+      self.BoomAxes = CreateModelsLogic.CreateCoordinate(TailBoomRadius * 2, TailBoomRadius / 5)
+      self.BoomAxes.SetName('BoomAxes')
+      self.BoomAxes.ApplyTransform(FuselageBoomAssembly.GetTransformToParent())
+      self.BoomAxes.HardenTransform()
+      
+      self.RotorCylinderAxes = CreateModelsLogic.CreateCoordinate(RotorCylinderOuterRadius * 2, RotorCylinderOuterRadius / 5)
+      self.RotorCylinderAxes.SetName('RotorCylinderAxes')
+      self.RotorCylinderAxes.ApplyTransform(FuselageToCylinderNode.GetTransformToParent())
+      self.RotorCylinderAxes.HardenTransform()
+    
+      self.RotorAxes = CreateModelsLogic.CreateCoordinate(MainRotorRadius, MainRotorRadius/10)
+      self.RotorAxes.SetName('RotorAxes')
+      self.RotorAxes.ApplyTransform(FuselageToMainRotorNode.GetTransformToParent())
+      self.RotorAxes.HardenTransform()
+    # No need for tail rotor axes, identical to cylinder
+
+  def ComputeDynamicsProperties(self, FuselageMass, FuselageRadius, TailBoomMass, TailBoomLength, TailBoomRadius, RotorCylinderMass, RotorCylinderLength, RotorCylinderInnerRadius, RotorCylinderOuterRadius, MainRotorMass, MainRotorRadius, TailRotorMass, TailRotorRadius, CreateAxesIsChecked=False):
+    self.TotalMass = FuselageMass + TailBoomMass + RotorCylinderMass + MainRotorMass + TailRotorMass
+    
+    # Compute center of mass (COM)
+    self.COM = [0, 0, 0] # Initialize at origin, should be center of fuselage
+    self.COM[0] = ((-1*(FuselageRadius + (TailBoomLength/2))*TailBoomMass) - ((FuselageRadius + TailBoomLength + RotorCylinderOuterRadius)*(RotorCylinderMass + TailRotorMass)))/self.TotalMass
+    self.COM[2] = (FuselageRadius * MainRotorMass)/self.TotalMass
+    
+    # Compute moment of interia vector (I), about COM
+    self.I = [0, 0, 0]
+    
+    IxS1 = (FuselageMass) * (((2.0/5.0) * (FuselageRadius*FuselageRadius)) + (self.COM[2] ** 2))
+    IxS2 = (TailBoomMass) * ((TailBoomRadius/2.0) + (self.COM[2] ** 2))
+    IxS3 = (RotorCylinderMass) * ((( 3*(RotorCylinderOuterRadius**2 + RotorCylinderInnerRadius ** 2) + RotorCylinderLength ** 2)/12.0) + (self.COM[2] ** 2))
+    IxR1 = (MainRotorMass) * (((MainRotorRadius ** 2) / 4.0) + (FuselageRadius - self.COM[2]) ** 2)
+    IxR2 = (TailRotorMass) * ((TailRotorRadius / 2.0) + (self.COM[2] ** 2))
+    self.I[0] = IxS1 + IxS2 + IxS3 + IxR1 + IxR2
+    
+    IyS1 = (FuselageMass) * ((2.0 * FuselageRadius / 5.0) + ((self.COM[0] ** 2) + (self.COM[2] ** 2)))
+    IyS2 = (TailBoomMass) * (((3 * (TailBoomRadius ** 2)) + (TailBoomLength ** 2))/12.0 + ((((TailBoomLength / 2.0) + FuselageRadius + self.COM[0]) ** 2) + (self.COM[2] ** 2)))
+    IyS3 = (RotorCylinderMass) * (((RotorCylinderInnerRadius ** 2) + (RotorCylinderOuterRadius ** 2))/2.0 + ((((TailBoomLength / 2.0) + FuselageRadius + RotorCylinderOuterRadius + self.COM[0]) ** 2) + (self.COM[2] ** 2)))
+    IyR1 = (MainRotorMass) * (((MainRotorRadius ** 2) / 4.0) + ((self.COM[0] ** 2) + ((FuselageRadius - self.COM[2]) ** 2)))
+    IyR2 = (TailRotorMass) * ((TailRotorRadius / 2.0) + (((RotorCylinderOuterRadius + TailBoomLength + FuselageRadius + self.COM[0]) ** 2) + (self.COM[2] ** 2)))
+    self.I[1] = IyS1 + IyS2 + IyS3 + IyR1 + IyR2
+    
+    IzS1 = (FuselageMass) * ((2.0 * FuselageRadius / 5.0) + (self.COM[0] ** 2))
+    IzS2 = (TailBoomMass) * ((((3 * (TailBoomRadius ** 2)) + (TailBoomLength ** 2)) / 12.0) + (((TailBoomLength / 2.0) + FuselageRadius + self.COM[0]) ** 2))
+    IzS3 = (RotorCylinderMass) * ((( 3*(RotorCylinderOuterRadius**2 + RotorCylinderInnerRadius ** 2) + RotorCylinderLength ** 2)/12.0) + (((RotorCylinderLength / 2.0) + FuselageRadius + RotorCylinderOuterRadius + self.COM[0]) ** 2))
+    IzR1 = (MainRotorMass) * (((MainRotorRadius ** 2) / 4.0) + (self.COM[0] ** 2))
+    IzR2 = (TailRotorMass) * ((TailRotorRadius / 4.0) + ((RotorCylinderOuterRadius + TailBoomLength + FuselageRadius + self.COM[0]) ** 2))
+    self.I[2] = IzS1 + IzS2 + IzS3 + IzR1 + IzR2
+    
+    """
+    self.FuselageToCOMTransform = vtk.vtkMatrix4x4()
+    for dim in range(3):
+      self.FuselageToCOMTransform.SetElement(dim, 3, self.COM[dim])
+    self.FuselageToCOMNode = slicer.vtkMRMLTransformNode()
+    self.FuselageTOCOMNode.SetName('FuselageTOCOM')
+    self.FuselageToCOMNode.SetAndObserveMatrixTransformToParent(self.FuselageToCOMTransform)
+    slicer.mrmlScene.AddNode(self.FuselageTOCOMNode)
+    """
+    
+    self.COMToFuselageTransform = vtk.vtkMatrix4x4()
+    for dim in range(3):
+      self.COMToFuselageTransform.SetElement(dim, 3, self.COM[dim])
+    self.COMToFuselageNode = slicer.vtkMRMLTransformNode()
+    self.COMToFuselageNode.SetAndObserveMatrixTransformToParent(self.COMToFuselageTransform)
+    self.COMToFuselageNode.SetName('COMToFuselage')
+    slicer.mrmlScene.AddNode(self.COMToFuselageNode)
+    
+    
+    
+    print self.I  
+    
+  def
+    
 #
 # HelicopterBuilder
 #
@@ -118,7 +258,7 @@ class HelicopterBuilderWidget(ScriptedLoadableModuleWidget):
     self.TailRadiusSlider.singleStep = 0.05
     self.TailRadiusSlider.minimum = 0.1
     self.TailRadiusSlider.maximum = 1
-    self.TailRadiusSlider.value = 0.5
+    self.TailRadiusSlider.value = 0.3
     self.TailRadiusSlider.setToolTip("Set tail boom radius.")
     parametersFormLayout.addRow("Tail Boom Radius", self.TailRadiusSlider)
     
@@ -126,7 +266,7 @@ class HelicopterBuilderWidget(ScriptedLoadableModuleWidget):
     self.TailLengthSlider.singleStep = 0.05
     self.TailLengthSlider.minimum = 0.5
     self.TailLengthSlider.maximum = 5
-    self.TailLengthSlider.value = 1
+    self.TailLengthSlider.value = 2
     self.TailLengthSlider.setToolTip("Set tail boom length.")
     parametersFormLayout.addRow("Tail Boom Length", self.TailLengthSlider)
     
@@ -145,7 +285,7 @@ class HelicopterBuilderWidget(ScriptedLoadableModuleWidget):
     self.RotorCylinderLengthSlider.singleStep = 0.05
     self.RotorCylinderLengthSlider.minimum = 0.1
     self.RotorCylinderLengthSlider.maximum = 1
-    self.RotorCylinderLengthSlider.value = 0.5
+    self.RotorCylinderLengthSlider.value = 0.3
     self.RotorCylinderLengthSlider.setToolTip("Set rotor cylinder length.")
     parametersFormLayout.addRow("Rotor Cylinder Length", self.RotorCylinderLengthSlider)
     
@@ -153,7 +293,7 @@ class HelicopterBuilderWidget(ScriptedLoadableModuleWidget):
     self.RotorCylinderInnerRadiusSlider.singleStep = 0.01
     self.RotorCylinderInnerRadiusSlider.minimum = 0.05
     self.RotorCylinderInnerRadiusSlider.maximum = 1
-    self.RotorCylinderInnerRadiusSlider.value = 0.1
+    self.RotorCylinderInnerRadiusSlider.value = 0.4
     self.RotorCylinderInnerRadiusSlider.setToolTip("Set rotor inner radius (must be larger than tail fan radius).")
     parametersFormLayout.addRow("Rotor Cylinder Inner Radius", self.RotorCylinderInnerRadiusSlider)
 
@@ -161,7 +301,7 @@ class HelicopterBuilderWidget(ScriptedLoadableModuleWidget):
     self.RotorCylinderOuterRadiusSlider.singleStep = 0.01
     self.RotorCylinderOuterRadiusSlider.minimum = 0.3
     self.RotorCylinderOuterRadiusSlider.maximum = 1.5
-    self.RotorCylinderOuterRadiusSlider.value = self.RotorCylinderInnerRadiusSlider.value
+    self.RotorCylinderOuterRadiusSlider.value = 0.5
     self.RotorCylinderOuterRadiusSlider.setToolTip("Set rotor outer radius (must be larger than inner radius).")
     parametersFormLayout.addRow("Rotor Cylinder Outer Radius", self.RotorCylinderOuterRadiusSlider)
     
@@ -180,7 +320,7 @@ class HelicopterBuilderWidget(ScriptedLoadableModuleWidget):
     self.MainRotorRadiusSlider.singleStep = 0.1
     self.MainRotorRadiusSlider.minimum = 1
     self.MainRotorRadiusSlider.maximum = 5
-    self.MainRotorRadiusSlider.value = 2
+    self.MainRotorRadiusSlider.value = 3
     self.MainRotorRadiusSlider.setToolTip("Set main rotor radius.")
     parametersFormLayout.addRow("Main Rotor Radius", self.MainRotorRadiusSlider)
     
@@ -261,8 +401,8 @@ class HelicopterBuilderWidget(ScriptedLoadableModuleWidget):
     TailRotorRadius = self.TailRotorRadiusSlider.value
     if not Logic.CheckIfAttributesValid(RotorCylinderInnerRadius, RotorCylinderOuterRadius, TailRotorRadius):
       return
-    Logic.BuildModel(FuselageMass, FuselageRadius, TailBoomMass, TailBoomLength, TailBoomRadius, RotorCylinderMass, RotorCylinderLength, \
-      RotorCylinderInnerRadius, RotorCylinderOuterRadius, MainRotorMass, MainRotorRadius, TailRotorMass, TailRotorRadius)
+    HelicopterModel = Logic.BuildModel(FuselageMass, FuselageRadius, TailBoomMass, TailBoomLength, TailBoomRadius, RotorCylinderMass, RotorCylinderLength, \
+      RotorCylinderInnerRadius, RotorCylinderOuterRadius, MainRotorMass, MainRotorRadius, TailRotorMass, TailRotorRadius, self.CreateComponentAxesCheckBox.checked, self.CreateHelicopterAxesCheckBox.checked)
 
 #
 # HelicopterBuilderLogic
@@ -330,29 +470,16 @@ class HelicopterBuilderLogic(ScriptedLoadableModuleLogic):
     annotationLogic = slicer.modules.annotations.logic()
     annotationLogic.CreateSnapShot(name, description, type, 1, imageData)
 
-  def BuildModel(self, inputVolume, outputVolume, imageThreshold, enableScreenshots=0):
+  def BuildModel(self, FuselageMass, FuselageRadius, TailBoomMass, TailBoomLength, TailBoomRadius, RotorCylinderMass, RotorCylinderLength, RotorCylinderInnerRadius, RotorCylinderOuterRadius, MainRotorMass, MainRotorRadius, TailRotorMass, TailRotorRadius, CreateComponentAxesIsChecked, CreateHelicopterAxesIsChecked):
     """
     Build helicopter model
     """
 
-    if not self.isValidInputOutputData(inputVolume, outputVolume):
-      slicer.util.errorDisplay('Input volume is the same as output volume. Choose a different output volume.')
-      return False
+    HelicopterModel = Helicopter('Heli')
+    HelicopterModel.Build(FuselageMass, FuselageRadius, TailBoomMass, TailBoomLength, TailBoomRadius, RotorCylinderMass, RotorCylinderLength,\
+      RotorCylinderInnerRadius, RotorCylinderOuterRadius, MainRotorMass, MainRotorRadius, TailRotorMass, TailRotorRadius, CreateComponentAxesIsChecked, CreateHelicopterAxesIsChecked)
 
-    logging.info('Processing started')
-
-    # Compute the thresholded output volume using the Threshold Scalar Volume CLI module
-    cliParams = {'InputVolume': inputVolume.GetID(), 'OutputVolume': outputVolume.GetID(), 'ThresholdValue' : imageThreshold, 'ThresholdType' : 'Above'}
-    cliNode = slicer.cli.run(slicer.modules.thresholdscalarvolume, None, cliParams, wait_for_completion=True)
-
-    # Capture screenshot
-    if enableScreenshots:
-      self.takeScreenshot('HelicopterBuilderTest-Start','MyScreenshot',-1)
-
-    logging.info('Processing completed')
-
-    return True
-
+    return HelicopterModel
 
 class HelicopterBuilderTest(ScriptedLoadableModuleTest):
   """
