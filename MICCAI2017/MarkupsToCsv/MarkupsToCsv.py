@@ -1,6 +1,10 @@
 import csv
 OutputDir = 'C:\Users\church\Documents\Winter2017\MICCAI2017\Data'
+<<<<<<< HEAD
 OutputFile = '\DeepLearningData028.csv'
+=======
+OutputFile = '\DeepLearningData.csv'
+>>>>>>> bb0dbf51e9e6252772509f111b751df3a2e3a0ad
 TrP = []    # Transverse process landmarks
 SP = []     # Scale points
 Nodes = slicer.mrmlScene.GetNodesByClass('vtkMRMLMarkupsFiducialNode')
