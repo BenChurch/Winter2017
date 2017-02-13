@@ -1,0 +1,35 @@
+# Markups fiducial file version = 4.7
+# CoordinateSystem = 0
+# columns = id,x,y,z,ow,ox,oy,oz,vis,sel,lock,label,desc,associatedNodeID
+vtkMRMLMarkupsFiducialNode_152,2.96457,-6.07608,2.63453,0,0,0,1,1,1,0,T2S,,vtkMRMLModelNode5
+vtkMRMLMarkupsFiducialNode_153,1.82268,-10.9444,-14.047,0,0,0,1,1,1,0,T2I,,vtkMRMLModelNode5
+vtkMRMLMarkupsFiducialNode_154,2.51338,-11.6437,-15.9787,0,0,0,1,1,1,0,T3S,,vtkMRMLModelNode5
+vtkMRMLMarkupsFiducialNode_155,3.12462,-15.8739,-32.0042,0,0,0,1,1,1,0,T3I,,vtkMRMLModelNode5
+vtkMRMLMarkupsFiducialNode_156,3.66272,-16.4071,-36.4503,0,0,0,1,1,1,0,T4S,,vtkMRMLModelNode5
+vtkMRMLMarkupsFiducialNode_157,4.80302,-17.8473,-57.14,0,0,0,1,1,1,0,T4I,,vtkMRMLModelNode5
+vtkMRMLMarkupsFiducialNode_158,4.7471,-17.8561,-58.5578,0,0,0,1,1,1,0,T5S,,vtkMRMLModelNode5
+vtkMRMLMarkupsFiducialNode_162,4.62182,-17.244,-76.0095,0,0,0,1,1,1,0,T5I,,vtkMRMLModelNode5
+vtkMRMLMarkupsFiducialNode_163,4.87021,-16.9409,-77.573,0,0,0,1,1,1,0,T6S,,vtkMRMLModelNode5
+vtkMRMLMarkupsFiducialNode_164,4.34315,-15.6403,-95.9287,0,0,0,1,1,1,0,T6I,,vtkMRMLModelNode5
+vtkMRMLMarkupsFiducialNode_165,4.84879,-14.9936,-98.9787,0,0,0,1,1,1,0,T7S,,vtkMRMLModelNode5
+vtkMRMLMarkupsFiducialNode_166,2.82291,-13.3114,-123.385,0,0,0,1,1,1,0,T7I,,vtkMRMLModelNode5
+vtkMRMLMarkupsFiducialNode_167,2.31277,-13.1783,-125.431,0,0,0,1,1,1,0,T8S,,vtkMRMLModelNode5
+vtkMRMLMarkupsFiducialNode_168,2.78382,-8.63643,-147.948,0,0,0,1,1,1,0,T8I,,vtkMRMLModelNode5
+vtkMRMLMarkupsFiducialNode_169,1.04479,-8.40352,-154.439,0,0,0,1,1,1,0,T9S,,vtkMRMLModelNode5
+vtkMRMLMarkupsFiducialNode_170,-2.11127,-3.75367,-174.308,0,0,0,1,1,1,0,T9I,,vtkMRMLModelNode5
+vtkMRMLMarkupsFiducialNode_171,-1.88449,-3.39382,-176.597,0,0,0,1,1,1,0,T10S,,vtkMRMLModelNode5
+vtkMRMLMarkupsFiducialNode_172,-3.95389,0.106778,-203.692,0,0,0,1,1,1,0,T10I,,vtkMRMLModelNode5
+vtkMRMLMarkupsFiducialNode_173,-3.97152,0.12647,-207.881,0,0,0,1,1,1,0,T11S,,vtkMRMLModelNode5
+vtkMRMLMarkupsFiducialNode_174,-5.2272,3.9128,-230.516,0,0,0,1,1,1,0,T11I,,vtkMRMLModelNode5
+vtkMRMLMarkupsFiducialNode_175,-5.7983,4.9533,-235.786,0,0,0,1,1,1,0,T12S,,vtkMRMLModelNode5
+vtkMRMLMarkupsFiducialNode_176,-8.57166,10.2079,-256.501,0,0,0,1,1,1,0,T12I,,vtkMRMLModelNode5
+vtkMRMLMarkupsFiducialNode_177,-8.19335,13.2257,-262.402,0,0,0,1,1,1,0,L1S,,vtkMRMLModelNode5
+vtkMRMLMarkupsFiducialNode_178,-11.2446,17.9771,-287.019,0,0,0,1,1,1,0,L1I,,vtkMRMLModelNode5
+vtkMRMLMarkupsFiducialNode_179,-10.1444,22.4919,-301.625,0,0,0,1,1,1,0,L2S,,vtkMRMLModelNode5
+vtkMRMLMarkupsFiducialNode_180,-7.2153,27.5407,-328.694,0,0,0,1,1,1,0,L2I,,vtkMRMLModelNode5
+vtkMRMLMarkupsFiducialNode_181,-6.42828,29.1712,-340.296,0,0,0,1,1,1,0,L3S,,vtkMRMLModelNode5
+vtkMRMLMarkupsFiducialNode_182,-7.9579,28.6927,-370.707,0,0,0,1,1,1,0,L3I,,vtkMRMLModelNode5
+vtkMRMLMarkupsFiducialNode_183,-7.19862,29.3144,-385.885,0,0,0,1,1,1,0,L4S,,vtkMRMLModelNode5
+vtkMRMLMarkupsFiducialNode_184,-4.45854,25.2481,-414.112,0,0,0,1,1,1,0,L4I,,vtkMRMLModelNode5
+vtkMRMLMarkupsFiducialNode_185,-7.74343,18.2079,-435.452,0,0,0,1,1,1,0,L5S,,vtkMRMLModelNode5
+vtkMRMLMarkupsFiducialNode_188,-6.40179,2.35772,-457.721,0,0,0,1,1,1,0,L5I,,vtkMRMLModelNode5

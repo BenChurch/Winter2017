@@ -1,0 +1,27 @@
+# Markups fiducial file version = 4.7
+# CoordinateSystem = 0
+# columns = id,x,y,z,ow,ox,oy,oz,vis,sel,lock,label,desc,associatedNodeID
+vtkMRMLMarkupsFiducialNode_330,-8.20381,2.47822,-60.4215,0,0,0,1,1,1,0,T4S,,vtkMRMLModelNode4
+vtkMRMLMarkupsFiducialNode_331,-1.33719,1.46972,-74.4819,0,0,0,1,1,1,0,T4I,,vtkMRMLModelNode4
+vtkMRMLMarkupsFiducialNode_332,1.94411,1.74989,-76.4531,0,0,0,1,1,1,0,T5S,,vtkMRMLModelNode4
+vtkMRMLMarkupsFiducialNode_333,10.3023,2.20268,-91.1379,0,0,0,1,1,1,0,T5I,,vtkMRMLModelNode4
+vtkMRMLMarkupsFiducialNode_334,11.9931,3.19883,-92.7367,0,0,0,1,1,1,0,T6S,,vtkMRMLModelNode4
+vtkMRMLMarkupsFiducialNode_335,20.4235,4.81573,-106.964,0,0,0,1,1,1,0,T6I,,vtkMRMLModelNode4
+vtkMRMLMarkupsFiducialNode_336,21.8873,5.54343,-109.592,0,0,0,1,1,1,0,T7S,,vtkMRMLModelNode4
+vtkMRMLMarkupsFiducialNode_337,27.7153,8.19302,-124.736,0,0,0,1,1,1,0,T7I,,vtkMRMLModelNode4
+vtkMRMLMarkupsFiducialNode_338,28.4576,9.29043,-128.155,0,0,0,1,1,1,0,T8S,,vtkMRMLModelNode4
+vtkMRMLMarkupsFiducialNode_339,29.3521,12.713,-144.183,0,0,0,1,1,1,0,T8I,,vtkMRMLModelNode4
+vtkMRMLMarkupsFiducialNode_340,29.5869,14.3227,-148.496,0,0,0,1,1,1,0,T9S,,vtkMRMLModelNode4
+vtkMRMLMarkupsFiducialNode_344,31.3205,19.4009,-166.296,0,0,0,1,1,1,0,T9I,,vtkMRMLModelNode4
+vtkMRMLMarkupsFiducialNode_345,32.1067,21.876,-170.855,0,0,0,1,1,1,0,T10S,,vtkMRMLModelNode4
+vtkMRMLMarkupsFiducialNode_346,27.98,26.4145,-189.478,0,0,0,1,1,1,0,T10I,,vtkMRMLModelNode4
+vtkMRMLMarkupsFiducialNode_347,25.6782,27.8269,-192.674,0,0,0,1,1,1,0,T11S,,vtkMRMLModelNode4
+vtkMRMLMarkupsFiducialNode_348,17.7282,32.5787,-214.239,0,0,0,1,1,1,0,T11I,,vtkMRMLModelNode4
+vtkMRMLMarkupsFiducialNode_349,15.2068,34.2428,-217.322,0,0,0,1,1,1,0,T12S,,vtkMRMLModelNode4
+vtkMRMLMarkupsFiducialNode_350,4.6805,38.268,-239.219,0,0,0,1,1,1,0,T12I,,vtkMRMLModelNode4
+vtkMRMLMarkupsFiducialNode_351,3.59587,39.1513,-244.71,0,0,0,1,1,1,0,L1S,,vtkMRMLModelNode4
+vtkMRMLMarkupsFiducialNode_352,-5.44025,41.2175,-267.731,0,0,0,1,1,1,0,L1I,,vtkMRMLModelNode4
+vtkMRMLMarkupsFiducialNode_353,-8.18623,41.3993,-273.495,0,0,0,1,1,1,0,L2S,,vtkMRMLModelNode4
+vtkMRMLMarkupsFiducialNode_354,-14.736,42.3054,-300.325,0,0,0,1,1,1,0,L2I,,vtkMRMLModelNode4
+vtkMRMLMarkupsFiducialNode_355,-16.264,44.0089,-307.684,0,0,0,1,1,1,0,L3S,,vtkMRMLModelNode4
+vtkMRMLMarkupsFiducialNode_356,-18.7282,44.0223,-332.88,0,0,0,1,1,1,0,L3I,,vtkMRMLModelNode4

@@ -1,0 +1,23 @@
+# Markups fiducial file version = 4.7
+# CoordinateSystem = 0
+# columns = id,x,y,z,ow,ox,oy,oz,vis,sel,lock,label,desc,associatedNodeID
+vtkMRMLMarkupsFiducialNode_353,-67.0527,-26.6164,29.2567,0,0,0,1,1,1,0,T7S,,vtkMRMLModelNode6
+vtkMRMLMarkupsFiducialNode_354,-65.0611,-31.6292,7.09351,0,0,0,1,1,1,0,T7I,,vtkMRMLModelNode6
+vtkMRMLMarkupsFiducialNode_355,-64.2615,-33.9076,4.95733,0,0,0,1,1,1,0,T8S,,vtkMRMLModelNode6
+vtkMRMLMarkupsFiducialNode_356,-63.0854,-39.1998,-16.3064,0,0,0,1,1,1,0,T8I,,vtkMRMLModelNode6
+vtkMRMLMarkupsFiducialNode_357,-63.1609,-43.438,-18.2744,0,0,0,1,1,1,0,T9S,,vtkMRMLModelNode6
+vtkMRMLMarkupsFiducialNode_358,-61.0122,-43.236,-38.4671,0,0,0,1,1,1,0,T9I,,vtkMRMLModelNode6
+vtkMRMLMarkupsFiducialNode_359,-59.7533,-45.3944,-44.2504,0,0,0,1,1,1,0,T10S,,vtkMRMLModelNode6
+vtkMRMLMarkupsFiducialNode_360,-58.0282,-45.0368,-62.7817,0,0,0,1,1,1,0,T10I,,vtkMRMLModelNode6
+vtkMRMLMarkupsFiducialNode_361,-57.9999,-42.39,-68.1301,0,0,0,1,1,1,0,T11S,,vtkMRMLModelNode6
+vtkMRMLMarkupsFiducialNode_362,-56.697,-40.4442,-84.9352,0,0,0,1,1,1,0,T11I,,vtkMRMLModelNode6
+vtkMRMLMarkupsFiducialNode_363,-57.9564,-38.3211,-89.7233,0,0,0,1,1,1,0,T12S,,vtkMRMLModelNode6
+vtkMRMLMarkupsFiducialNode_364,-57.868,-30.0585,-115.334,0,0,0,1,1,1,0,T12I,,vtkMRMLModelNode6
+vtkMRMLMarkupsFiducialNode_365,-54.0388,-22.8858,-119.959,0,0,0,1,1,1,0,L1S,,vtkMRMLModelNode6
+vtkMRMLMarkupsFiducialNode_366,-50.6947,-8.33641,-148.114,0,0,0,1,1,1,0,L1I,,vtkMRMLModelNode6
+vtkMRMLMarkupsFiducialNode_367,-49.4785,-0.996632,-156.287,0,0,0,1,1,1,0,L2S,,vtkMRMLModelNode6
+vtkMRMLMarkupsFiducialNode_368,-45.9225,11.1585,-189.74,0,0,0,1,1,1,0,L2I,,vtkMRMLModelNode6
+vtkMRMLMarkupsFiducialNode_369,-42.4282,17.568,-201.635,0,0,0,1,1,1,0,L3S,,vtkMRMLModelNode6
+vtkMRMLMarkupsFiducialNode_370,-40.18,24.6378,-234.182,0,0,0,1,1,1,0,L3I,,vtkMRMLModelNode6
+vtkMRMLMarkupsFiducialNode_371,-40.0087,27.9931,-247.558,0,0,0,1,1,1,0,L4S,,vtkMRMLModelNode6
+vtkMRMLMarkupsFiducialNode_372,-38.8571,28.5902,-279.663,0,0,0,1,1,1,0,L4I,,vtkMRMLModelNode6

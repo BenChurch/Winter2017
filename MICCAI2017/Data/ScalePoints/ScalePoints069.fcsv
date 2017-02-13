@@ -1,0 +1,37 @@
+# Markups fiducial file version = 4.7
+# CoordinateSystem = 0
+# columns = id,x,y,z,ow,ox,oy,oz,vis,sel,lock,label,desc,associatedNodeID
+vtkMRMLMarkupsFiducialNode_157,59.8539,17.8885,337.024,0,0,0,1,1,1,0,ScalePoints069-1,,vtkMRMLModelNode21
+vtkMRMLMarkupsFiducialNode_158,62.794,14.129,326.79,0,0,0,1,1,1,0,ScalePoints069-2,,vtkMRMLModelNode21
+vtkMRMLMarkupsFiducialNode_159,64.3436,10.3088,321.178,0,0,0,1,1,1,0,ScalePoints069-3,,vtkMRMLModelNode21
+vtkMRMLMarkupsFiducialNode_160,64.6121,4.81268,309.333,0,0,0,1,1,1,0,ScalePoints069-4,,vtkMRMLModelNode21
+vtkMRMLMarkupsFiducialNode_161,64.6172,2.10513,305.982,0,0,0,1,1,1,0,ScalePoints069-5,,vtkMRMLModelNode21
+vtkMRMLMarkupsFiducialNode_162,61.8294,-2.72496,294.106,0,0,0,1,1,1,0,ScalePoints069-6,,vtkMRMLModelNode21
+vtkMRMLMarkupsFiducialNode_163,60.2909,-5.24472,291.069,0,0,0,1,1,1,0,ScalePoints069-7,,vtkMRMLModelNode21
+vtkMRMLMarkupsFiducialNode_164,55.8044,-9.11192,278.495,0,0,0,1,1,1,0,ScalePoints069-8,,vtkMRMLModelNode21
+vtkMRMLMarkupsFiducialNode_165,54.1661,-11.1015,276.307,0,0,0,1,1,1,0,ScalePoints069-9,,vtkMRMLModelNode21
+vtkMRMLMarkupsFiducialNode_166,50.4988,-13.5602,262.635,0,0,0,1,1,1,0,ScalePoints069-10,,vtkMRMLModelNode21
+vtkMRMLMarkupsFiducialNode_167,48.7832,-14.9153,259.578,0,0,0,1,1,1,0,ScalePoints069-11,,vtkMRMLModelNode21
+vtkMRMLMarkupsFiducialNode_168,41.1381,-15.8604,244.449,0,0,0,1,1,1,0,ScalePoints069-12,,vtkMRMLModelNode21
+vtkMRMLMarkupsFiducialNode_169,38.8448,-16.3829,241.865,0,0,0,1,1,1,0,ScalePoints069-13,,vtkMRMLModelNode21
+vtkMRMLMarkupsFiducialNode_170,29.8584,-16.486,228.762,0,0,0,1,1,1,0,ScalePoints069-14,,vtkMRMLModelNode21
+vtkMRMLMarkupsFiducialNode_171,27.291,-17.0061,225.898,0,0,0,1,1,1,0,ScalePoints069-15,,vtkMRMLModelNode21
+vtkMRMLMarkupsFiducialNode_172,17.0267,-16.026,212.117,0,0,0,1,1,1,0,ScalePoints069-16,,vtkMRMLModelNode21
+vtkMRMLMarkupsFiducialNode_173,14.6944,-16.8746,210.484,0,0,0,1,1,1,0,ScalePoints069-17,,vtkMRMLModelNode21
+vtkMRMLMarkupsFiducialNode_174,-0.357189,-15.0254,198.146,0,0,0,1,1,1,0,ScalePoints069-18,,vtkMRMLModelNode21
+vtkMRMLMarkupsFiducialNode_175,-3.98829,-15.6977,197.026,0,0,0,1,1,1,0,ScalePoints069-19,,vtkMRMLModelNode21
+vtkMRMLMarkupsFiducialNode_176,-20.8405,-15.0784,186.618,0,0,0,1,1,1,0,ScalePoints069-20,,vtkMRMLModelNode21
+vtkMRMLMarkupsFiducialNode_177,-25.2421,-15.4914,185.525,0,0,0,1,1,1,0,ScalePoints069-21,,vtkMRMLModelNode21
+vtkMRMLMarkupsFiducialNode_178,-41.54,-13.2338,174.18,0,0,0,1,1,1,0,ScalePoints069-22,,vtkMRMLModelNode21
+vtkMRMLMarkupsFiducialNode_179,-45.6525,-13.5681,170.526,0,0,0,1,1,1,0,ScalePoints069-23,,vtkMRMLModelNode21
+vtkMRMLMarkupsFiducialNode_180,-60.7222,-11.3194,156.576,0,0,0,1,1,1,0,ScalePoints069-24,,vtkMRMLModelNode21
+vtkMRMLMarkupsFiducialNode_181,-65.4864,-10.8263,152.482,0,0,0,1,1,1,0,ScalePoints069-25,,vtkMRMLModelNode21
+vtkMRMLMarkupsFiducialNode_182,-78.3521,-6.98359,137.148,0,0,0,1,1,1,0,ScalePoints069-26,,vtkMRMLModelNode21
+vtkMRMLMarkupsFiducialNode_183,-81.3604,-3.73033,129.564,0,0,0,1,1,1,0,ScalePoints069-27,,vtkMRMLModelNode21
+vtkMRMLMarkupsFiducialNode_184,-86.6706,4.51022,111.847,0,0,0,1,1,1,0,ScalePoints069-28,,vtkMRMLModelNode21
+vtkMRMLMarkupsFiducialNode_185,-86.0862,10.6958,102.874,0,0,0,1,1,1,0,ScalePoints069-29,,vtkMRMLModelNode21
+vtkMRMLMarkupsFiducialNode_186,-82.2083,20.876,79.9238,0,0,0,1,1,1,0,ScalePoints069-30,,vtkMRMLModelNode21
+vtkMRMLMarkupsFiducialNode_187,-77.3672,24.174,74.1193,0,0,0,1,1,1,0,ScalePoints069-31,,vtkMRMLModelNode21
+vtkMRMLMarkupsFiducialNode_189,-56.7703,31.8199,56.6894,0,0,0,1,1,1,0,ScalePoints069-33,,vtkMRMLModelNode21
+vtkMRMLMarkupsFiducialNode_190,-56.4389,33.9391,43.7714,0,0,0,1,1,1,0,ScalePoints069-34,,vtkMRMLModelNode21
+vtkMRMLMarkupsFiducialNode_191,-42.7586,32.1223,21.835,0,0,0,1,1,1,0,ScalePoints069-35,,vtkMRMLModelNode21
