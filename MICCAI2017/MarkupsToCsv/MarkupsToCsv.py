@@ -38,14 +38,14 @@ with open(OutputDir + OutputFile, 'wb') as Output:
       SupAntPoint = ScaleNode.GetMarkupPointVector((NonBoundaryVertebra * 2), 0)
       InfAntPoint = ScaleNode.GetMarkupPointVector((NonBoundaryVertebra * 2) + 1, 0)
       
-      AvgPos[0] = (SupLeftPoint[0] + SupRightPoint[0] + LeftPoint[0] + RightPoint[0] + InfLeftPoint[0] + InfRightPoint[0] + SupAntPoint[0] + InfAntPoint[0]) / 8
-      AvgPos[1] = (SupLeftPoint[1] + SupRightPoint[1] + LeftPoint[1] + RightPoint[1] + InfLeftPoint[1] + InfRightPoint[1] + SupAntPoint[1] + InfAntPoint[1]) / 8
-      AvgPos[0] = (SupLeftPoint[2] + SupRightPoint[2] + LeftPoint[2] + RightPoint[2] + InfLeftPoint[2] + InfRightPoint[2] + SupAntPoint[2] + InfAntPoint[2]) / 8
-      
-      MaxAbsPos = max(abs(SupLeftPoint[0]), abs(SupLeftPoint[1]), abs(SupLeftPoint[2]), abs(SupRightPoint[0]), abs(SupRightPoint[1]), abs(SupRightPoint[2]), \
-        abs(LeftPoint[0]), abs(LeftPoint[1]), abs(LeftPoint[2]), abs(RightPoint[0]), abs(RightPoint[1]), abs(RightPoint[2]), \
-        abs(InfLeftPoint[0]), abs(InfLeftPoint[1]), abs(InfLeftPoint[2]), abs(InfRightPoint[0]), abs(InfRightPoint[1]), abs(InfRightPoint[2]), \
-        abs(SupAntPoint[0]), abs(SupAntPoint[1]), abs(SupAntPoint[2]), abs(InfAntPoint[0]), abs(InfAntPoint[1]), abs(InfAntPoint[2]))         # To divide point coordinates for normalization
+      #AvgPos[0] = (SupLeftPoint[0] + SupRightPoint[0] + LeftPoint[0] + RightPoint[0] + InfLeftPoint[0] + InfRightPoint[0] + SupAntPoint[0] + InfAntPoint[0]) / 8
+      #AvgPos[1] = (SupLeftPoint[1] + SupRightPoint[1] + LeftPoint[1] + RightPoint[1] + InfLeftPoint[1] + InfRightPoint[1] + SupAntPoint[1] + InfAntPoint[1]) / 8
+      #AvgPos[2] = (SupLeftPoint[2] + SupRightPoint[2] + LeftPoint[2] + RightPoint[2] + InfLeftPoint[2] + InfRightPoint[2] + SupAntPoint[2] + InfAntPoint[2]) / 8
+      MaxAbsPos = 1
+      #MaxAbsPos = max(abs(SupLeftPoint[0]), abs(SupLeftPoint[1]), abs(SupLeftPoint[2]), abs(SupRightPoint[0]), abs(SupRightPoint[1]), abs(SupRightPoint[2]), \
+      #  abs(LeftPoint[0]), abs(LeftPoint[1]), abs(LeftPoint[2]), abs(RightPoint[0]), abs(RightPoint[1]), abs(RightPoint[2]), \
+      #  abs(InfLeftPoint[0]), abs(InfLeftPoint[1]), abs(InfLeftPoint[2]), abs(InfRightPoint[0]), abs(InfRightPoint[1]), abs(InfRightPoint[2]), \
+      #  abs(SupAntPoint[0]), abs(SupAntPoint[1]), abs(SupAntPoint[2]), abs(InfAntPoint[0]), abs(InfAntPoint[1]), abs(InfAntPoint[2]))         # To divide point coordinates for normalization
         
       OutputWriter.writerow([(SupLeftPoint[0] - AvgPos[0])/MaxAbsPos, (SupLeftPoint[1] - AvgPos[1])/MaxAbsPos, (SupLeftPoint[2] - AvgPos[2])/MaxAbsPos, (SupRightPoint[0] - AvgPos[0])/MaxAbsPos, (SupRightPoint[1] - AvgPos[1])/MaxAbsPos, (SupRightPoint[2] - AvgPos[2])/MaxAbsPos, \
         (LeftPoint[0] - AvgPos[0])/MaxAbsPos, (LeftPoint[1] - AvgPos[1])/MaxAbsPos, (LeftPoint[2] - AvgPos[2])/MaxAbsPos, (RightPoint[0] - AvgPos[0])/MaxAbsPos, (RightPoint[1] - AvgPos[1])/MaxAbsPos, (RightPoint[2] - AvgPos[2])/MaxAbsPos, \
