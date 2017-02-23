@@ -1,7 +1,8 @@
 import vtkSegmentationCorePython as Seg
 import csv
 Logic = slicer.modules.segmentcomparison.logic()
-OutputDir = 'C:\Users\church\Documents\Winter2017\MICCAI2017\Data'
+#OutputDir = 'C:\Users\church\Documents\Winter2017\MICCAI2017\Data'
+OutputDir = 'C:\Users\Ben\Documents\Masters16_17\Winter2017\MICCAI2017\Data'
 if slicer.util.getNode('SegmentCompare'):
   slicer.mrmlScene.RemoveNode(slicer.util.getNode('SegmentCompare'))
 

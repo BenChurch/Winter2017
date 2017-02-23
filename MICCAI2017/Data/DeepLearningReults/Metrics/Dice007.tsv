@@ -1,0 +1,14 @@
+Metric name	Metric value
+Reference segmentation	Segmentation
+Reference segment	MergedAtlas007
+Compare segmentation	Segmentation
+Compare segment	007
+Dice coefficient	0.647195
+True positives (%)	5.42056
+True negatives (%)	88.6696
+False positives (%)	3.45236
+False negatives (%)	2.45746
+Reference center	(-10.8133, 13.4674, -183.897)
+Compare center	(-11.578, 13.0087, -196.427)
+Reference volume (cc)	313.356
+Compare volume (cc)	352.929

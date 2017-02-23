@@ -1,10 +1,9 @@
 import csv
-OutputDir = 'C:\Users\church\Documents\Winter2017\MICCAI2017\Data'
-<<<<<<< HEAD
-OutputFile = '\DeepLearningData028.csv'
-=======
-OutputFile = '\DeepLearningData.csv'
->>>>>>> bb0dbf51e9e6252772509f111b751df3a2e3a0ad
+#OutputDir = 'C:\Users\church\Documents\Winter2017\MICCAI2017\Data'
+OutputDir = 'C:\Users\Ben\Documents\Masters16_17\Winter2017\MICCAI2017\Data'
+
+OutputFile = '\PredictAllVertebrae.csv'
+
 TrP = []    # Transverse process landmarks
 SP = []     # Scale points
 Nodes = slicer.mrmlScene.GetNodesByClass('vtkMRMLMarkupsFiducialNode')
@@ -27,14 +26,14 @@ with open(OutputDir + OutputFile, 'wb') as Output:
       print "Error - " + LandmarkNode.GetName() + " does not correspond to " + ScaleNode.GetName()
       print "   check input set correspondence"
       break
-    for NonBoundaryVertebra in range(1, (ScaleNode.GetNumberOfFiducials()/2) - 2):    # This should exclude trying to captur boundary vertebrae in triplets, as they have only one neighbor
+    for NonBoundaryVertebra in range(0, (ScaleNode.GetNumberOfFiducials()/2)):    # This should exclude trying to captur boundary vertebrae in triplets, as they have only one neighbor
       AvgPos = [0, 0, 0]    # To be subtracted from all coords, centering the input vector
-      SupLeftPoint = LandmarkNode.GetMarkupPointVector((NonBoundaryVertebra * 2) - 2, 0)
-      SupRightPoint = LandmarkNode.GetMarkupPointVector((NonBoundaryVertebra * 2) - 1, 0)
-      LeftPoint = LandmarkNode.GetMarkupPointVector((NonBoundaryVertebra * 2), 0)
-      RightPoint = LandmarkNode.GetMarkupPointVector((NonBoundaryVertebra * 2) + 1, 0)
-      InfLeftPoint = LandmarkNode.GetMarkupPointVector((NonBoundaryVertebra * 2) + 2, 0)
-      InfRightPoint = LandmarkNode.GetMarkupPointVector((NonBoundaryVertebra * 2) + 3, 0)
+      SupLeftPoint = LandmarkNode.GetMarkupPointVector((NonBoundaryVertebra * 2), 0)
+      SupRightPoint = LandmarkNode.GetMarkupPointVector((NonBoundaryVertebra * 2)+1, 0)
+      LeftPoint = LandmarkNode.GetMarkupPointVector((NonBoundaryVertebra * 2)+2, 0)
+      RightPoint = LandmarkNode.GetMarkupPointVector((NonBoundaryVertebra * 2) + 3, 0)
+      InfLeftPoint = LandmarkNode.GetMarkupPointVector((NonBoundaryVertebra * 2) + 4, 0)
+      InfRightPoint = LandmarkNode.GetMarkupPointVector((NonBoundaryVertebra * 2) + 5, 0)
       SupAntPoint = ScaleNode.GetMarkupPointVector((NonBoundaryVertebra * 2), 0)
       InfAntPoint = ScaleNode.GetMarkupPointVector((NonBoundaryVertebra * 2) + 1, 0)
       

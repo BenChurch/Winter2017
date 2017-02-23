@@ -1,7 +1,7 @@
 import csv
 #OutputDir = 'C:\Users\church\Documents\Winter2017\MICCAI2017\Data'
 OutputDir = 'C:\Users\Ben\Documents\Masters16_17\Winter2017\MICCAI2017\Data'
-OutputFile = '\NetworkInput1'
+OutputFile = '\PredictAllVertebrae007'
 Nodes = slicer.mrmlScene.GetNodesByClass('vtkMRMLMarkupsFiducialNode')
 
 #with open(OutputDir + OutputFile + Nodes.GetItemAsObject(i).GetName()[-9:-6] + '.csv', 'wb') as Output:
@@ -10,7 +10,7 @@ with open(OutputDir + OutputFile + '.csv', 'wb') as Output:
   OutputWriter.writerow(['SupLeftR', 'SupLeftA', 'SupLeftS', 'SupRightR', 'SupRightA', 'SupRightS', 'LeftR', 'LeftA', 'LeftS', 'RightR', 'RightA', 'RightS',\
   'InfLeftR', 'InfLeftA', 'InfLeftS', 'InfRightR', 'InfRightA', 'InfRightS'])
   for i, LandmarkNode in enumerate(Nodes):
-    for NonBoundaryVertebra in range(1, (LandmarkNode.GetNumberOfFiducials()/2) - 2):    # This should exclude trying to captur boundary vertebrae in triplets, as they have only one neighbor
+    for NonBoundaryVertebra in range(1, (LandmarkNode.GetNumberOfFiducials()/2)-1):    # This should exclude trying to captur boundary vertebrae in triplets, as they have only one neighbor
       AvgPos = [0, 0, 0]    # To be subtracted from all coords, centering the input vector
       SupLeftPoint = LandmarkNode.GetMarkupPointVector((NonBoundaryVertebra * 2) - 2, 0)
       SupRightPoint = LandmarkNode.GetMarkupPointVector((NonBoundaryVertebra * 2) - 1, 0)

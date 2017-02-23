@@ -820,6 +820,10 @@ class ModelToPatientRegistrationLogic:
         CurrentVertebraAverageAntPoint[dim] = (SupScalePoint[1][dim] + InfScalePoint[1][dim]) / 2.0
         CurrentVertebraAveragePostPoint[dim] = (LeftTrP[1][dim] + RightTrP[1][dim]) / 2.0
         AntPostScaleVector[dim] = CurrentVertebraAverageAntPoint[dim] - CurrentVertebraAveragePostPoint[dim]
+        
+      # DON'T USE SUP-INF SCALE, NETWORK PERFORMANCE INADEQUATE IN THAT DIMENSION
+      AntPostScaleVector[2] = 0
+      
       #print np.linalg.norm(AntPostScaleVector)
       Anatomy.AnchorOffsetScaleFactors[VertebraPost] = (np.linalg.norm(AntPostScaleVector)) # Once for the left anchor point
       Anatomy.AnchorOffsetScaleFactors[VertebraPost + 1] = (np.linalg.norm(AntPostScaleVector)) # And once for the right

@@ -1,0 +1,22 @@
+TRANSLATION_X_RANGE = 10
+TRANSLATION_Y_RANGE = 10
+TRANSLATION_Z_RANGE = 10
+ROTATION_X_RANGE = 0 / 12. * np.pi
+ROTATION_Y_RANGE = 0 / 6. * np.pi
+ROTATION_Z_RANGE = 0 / 6. * np.pi
+
+def get_random_transformation():
+    # Todo: Rotation has bugs! for now just we use translation for augmentation.
+    translation_x = np.random.random(1) * TRANSLATION_X_RANGE * flip_a_coin()
+    translation_y = np.random.random(1) * TRANSLATION_Y_RANGE * flip_a_coin()
+    translation_z = np.random.random(1) * TRANSLATION_Z_RANGE * flip_a_coin()
+    theta_x = np.random.uniform(0, ROTATION_X_RANGE) * flip_a_coin()
+    theta_y = np.random.uniform(0, ROTATION_Y_RANGE) * flip_a_coin() * flip_a_coin()
+    theta_z = np.random.uniform(0, ROTATION_Z_RANGE) * flip_a_coin() * flip_a_coin()
+    translation = (translation_x[0], translation_y[0], translation_z[0])
+    rotation = (theta_x, theta_y, theta_z)
+    return translation, rotation
+
+
+def flip_a_coin():
+return np.random.binomial(1, 0.5)
