@@ -1,0 +1,22 @@
+    Capitalize only the first letter of a title, because it's too hard to do more complex capitalizations correctly and consistently
+        Good: Style guide for posters and presentations
+        Bad: Style Guide for Posters and Presentations
+    Always format et al. with italic font style
+        Good: et al.
+        Bad: et al.
+    Do not put period at the end of bullet-point lists, as they are not complete sentences.
+        Good
+        Bad.
+    The use of abreviations is generally kept to a minimum whenever possible.
+        Good: region of interest
+        Bad: ROI
+    Use a maximum of 5 font types (including font type, style, size, color) throughout the whole document (e.g., title, section heading, body text, caption)
+    Use short references when you cite a paper in a presentation slide
+        Good: Pinter, Med Phys, 2013
+        Bad: Pinter, C., A. Lasso, A. Wang, D. Jaffray, and G. Fichtinger, "SlicerRT – Radiation therapy research toolkit for 3D Slicer", Medical Physics, 39(10), 6332-6337, 2012
+        References are best placed at the bottom of the slide they are mentioned on.
+    Do NOT include an outline slide in your presentation if the length of the talk is less than 20 minues. You can tell the audience what your presentation is about while you are showing the title slide, but there is no need to spend one minute with showing and explaining a dedicated slide.
+    A simpler, less cluttered slide is often preferable to one with too much information.
+        Short statements are often prefered to long paragraphs.
+    The use of videos in a presentation is generally encouraged.
+    When images of a workspace are shown a backdrop should be used to block the view of the rest of the lab, so that the main focus of the picture is the object that is shown.
