@@ -291,6 +291,9 @@ class ModelToPatientRegistrationLogic:
     if self.UseScalingPoints:
       self.PatientScalePointsNode = slicer.util.getNode('ScalePoints' + self.OriginalPatientPoints.GetName()[-3:])
       self.AllModelScalePointsNode = slicer.util.getNode('ModelScalePoints')
+    else:
+      self.PatientScalePointsNode = None
+      self.AllModelScalePointsNode = None
     self.GlobalVertebralScalingFactor = 30       # Distance (mm) in anterior direction to duplicate fiducial points for registration accuracy
   
   class Patient:
@@ -391,14 +394,17 @@ class ModelToPatientRegistrationLogic:
           CorrespondingLandmarksNode.SetNthFiducialLabel(PatientLandmarkPointCounter, Patient.LandmarksNode.GetNthFiducialLabel(PatientLandmarkPointCounter))
           PatientLandmarkPointCounter += 1
         
-      CorrespondingScalePointsNode = slicer.vtkMRMLMarkupsFiducialNode()
-      PatientScalePointCounter = 0
-      for P in range(self.FullScalePointsNode.GetNumberOfFiducials()):
-        if Patient.ScalePointsNode.GetNthFiducialLabel(PatientScalePointCounter) == self.FullScalePointsNode.GetNthFiducialLabel(P):
-          CorrespondingScalePointsNode.AddFiducialFromArray(self.FullScalePointsNode.GetMarkupPointVector(P, 0))
-          CorrespondingScalePointsNode.SetNthFiducialLabel(PatientLandmarkPointCounter, self.FullScalePointsNode.GetNthFiducialLabel(P))
-          PatientScalePointCounter += 1
-      #print CorrespondingLandmarksNode
+      if self.FullScalePointsNode != None:
+        CorrespondingScalePointsNode = slicer.vtkMRMLMarkupsFiducialNode()
+        PatientScalePointCounter = 0
+        for P in range(self.FullScalePointsNode.GetNumberOfFiducials()):
+          if Patient.ScalePointsNode.GetNthFiducialLabel(PatientScalePointCounter) == self.FullScalePointsNode.GetNthFiducialLabel(P):
+            CorrespondingScalePointsNode.AddFiducialFromArray(self.FullScalePointsNode.GetMarkupPointVector(P, 0))
+            CorrespondingScalePointsNode.SetNthFiducialLabel(PatientLandmarkPointCounter, self.FullScalePointsNode.GetNthFiducialLabel(P))
+            PatientScalePointCounter += 1
+        #print CorrespondingLandmarksNode
+      else:
+        CorrespondingScalePointsNode = None
       return (CorrespondingLandmarksNode, CorrespondingScalePointsNode)
       
   def AnchorPointSets(self):
@@ -412,7 +418,8 @@ class ModelToPatientRegistrationLogic:
     #self.ComputeOffsetUnitVectors(self.PatientAnatomy)
     
     if self.UseVertebraWiseScaling or self.UseAverageScaling:
-      self.ComputeLocalAnatomicScalingFactors()
+      self.ComputeLocalAnatomicScalingFactors(self.ModelAnatomy)
+      self.ComputeLocalAnatomicScalingFactors(self.PatientAnatomy)
       
     if self.UseScalingPoints:
       self.ComputeScalingFactorsFromScalePoints(self.ModelAnatomy)
@@ -766,8 +773,8 @@ class ModelToPatientRegistrationLogic:
         
     return RightLeftVecor
  """
-  def ComputeLocalAnatomicScalingFactors(self):
-    import numpy
+  def ComputeLocalAnatomicScalingFactors(self, Anatomy):
+    import numpy as np
     if self.UseVerticalScaling:
       # Uses lengths of SupInfVectors as anatomic scaling factors
       SumPatientScalingFactors = 0

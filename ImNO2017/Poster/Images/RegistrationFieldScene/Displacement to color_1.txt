@@ -1,0 +1,4 @@
+# Color procedural file C:/Users/Ben/Documents/Masters16_17/Winter2017/ImNO2017/Poster/Images/RFS/Displacement to color_1.txt
+# 1 points
+# position R G B
+2.37688 0.988235 1 0.0823529
