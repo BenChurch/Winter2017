@@ -2,14 +2,20 @@ import csv
 import numpy as np
 from scipy.optimize import minimize
 
+# Base score threshold for positive exploit prediction
+PredictionThreshold = 8
+
 VulnDir = './/Data//'
 UnexploitedCsvFile = 'UnexploitedIdsVectors.csv'
 ExploitedCsvFile = 'ExploitedIdsVectors.csv'
 
 ParamsDir = './/'
 ParamsFile = 'optimizationResults.csv'
-RowRange = range(2, 3) # Allow some kind of hyper-parameter search
+RowRange = range(1, 3) # Allow some kind of hyper-parameter search
 NumParams = 18  # How many parameters to read from each row
+
+OutputDir = './/'
+OutputFile = 'Metrics.csv'
 
 def Vector2BaseScore(Vector, Params): 
   # Expecting a 6 element array of chars indicating base score metric values
@@ -71,7 +77,7 @@ with open(VulnDir + ExploitedCsvFile, 'r', encoding='ascii', errors="surrogatees
   for line in EntryReader:
     Exploited.append((line[0], line[1]))  # (ID, Vector)
    
-"""
+
 # Read in parameters
 Params = []
 with open(ParamsDir + ParamsFile, 'r', encoding='ascii', errors="surrogateescape") as file:
@@ -89,8 +95,8 @@ with open(ParamsDir + ParamsFile, 'r', encoding='ascii', errors="surrogateescape
           Params[-1].append(float(line[1][ParamStart:ParamStop]))
           ParamStart = ParamStop + 1
     LineNum += 1
-print(Params)
-""" 
+#print(Params)
+  
 
 def ComputeICC(Params, Unexpl, Expl):
   UnexploitedScores = []
@@ -145,7 +151,6 @@ def ComputeICC(Params, Unexpl, Expl):
   #print("")
   return CompICC
   
-
 def PredictExploits(Unexploited, Exploited, Params, Threshold):       # Combines all vuln vectors and computes their base score using Params. Scores > Threshold mean positive prediction
   # Returns confusion matrix [[TP, TN], [FP, FN]]
   
@@ -187,17 +192,34 @@ def PredictExploits(Unexploited, Exploited, Params, Threshold):       # Combines
   
   TN = 0
   FP = 0
-  for Vuln in Unexploited:
-    Score = Vector2BaseScore(Vuln[1], Params)
-    if Score >= Threshold: FP += 1
+  for VulnScore in UnexplScores:
+    #print(VulnScore)
+    if VulnScore >= Threshold: FP += 1
     else: TN += 1
     
   TP = 0
   FN = 0
-  for Vuln in Exploited:
-    Score = Vector2BaseScore(Vuln[1], Params)
-    if Score >= Threshold: TP += 1
+  for VulnScore in ExplScores:
+    print(VulnScore)
+    if VulnScore >= Threshold: TP += 1
     else: FN += 1
     
   return [[TP, TN], [FP, FN]]
   
+def ComputeSensitivity(ConfusionMatrix):
+  TPs = float(ConfusionMatrix[0][0])
+  FNs = float(ConfusionMatrix[1][1])
+  return (TPs / (TPs + FNs))
+
+def ComputePrecision(ConfusionMatrix):
+  TPs = float(ConfusionMatrix[0][0])
+  FPs = float(ConfusionMatrix[1][0])
+  return (TPs / (TPs + FPs))
+  
+# Main program - compute and capture confusion matrix, metrics
+with open(OutputDir + OutputFile, 'w', newline = '') as file:
+  OutputWriter = csv.writer(file)
+  OutputWriter.writerow(['ParamSet #','Params','Confusion matrix', 'Sensitiviy', 'Prescision'])
+  for i, ParamSet in enumerate(Params):
+    ConMat = PredictExploits(Unexploited, Exploited, ParamSet, PredictionThreshold)
+    OutputWriter.writerow([i+1, ParamSet, ConMat, ComputeSensitivity(ConMat), ComputePrecision(ConMat)])

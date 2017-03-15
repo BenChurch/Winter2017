@@ -17,9 +17,9 @@ class Helicopter():
     
   def Build(self, FuselageMass, FuselageRadius, TailBoomMass, TailBoomLength, TailBoomRadius, RotorCylinderMass, RotorCylinderLength, RotorCylinderInnerRadius, RotorCylinderOuterRadius, MainRotorMass, MainRotorRadius, TailRotorMass, TailRotorRadius, CreateComponentAxesIsChecked, CreateHelicopterAxesIsChecked):
     self.CreateGeomtricModel(FuselageRadius,  TailBoomLength, TailBoomRadius, RotorCylinderLength, RotorCylinderInnerRadius, RotorCylinderOuterRadius, MainRotorRadius, TailRotorRadius, CreateComponentAxesIsChecked)
-    self.ComputeDynamicsProperties(FuselageMass, FuselageRadius, TailBoomMass, TailBoomLength, TailBoomRadius, RotorCylinderMass, RotorCylinderLength, RotorCylinderInnerRadius, RotorCylinderOuterRadius, MainRotorMass, MainRotorRadius, TailRotorMass, TailRotorRadius, CreateHelicopterAxesIsChecked)
+    self.ComputeDynamicsProperties(FuselageMass, FuselageRadius, TailBoomMass, TailBoomLength, TailBoomRadius, RotorCylinderMass, RotorCylinderLength, RotorCylinderInnerRadius, RotorCylinderOuterRadius, MainRotorMass, MainRotorRadius, TailRotorMass, TailRotorRadius, CreateComponentAxesIsChecked, CreateHelicopterAxesIsChecked)
     
-  def CreateGeomtricModel(self, FuselageRadius,  TailBoomLength, TailBoomRadius, RotorCylinderLength, RotorCylinderInnerRadius, RotorCylinderOuterRadius, MainRotorRadius, TailRotorRadius, CreateAxesIsChecked=False):
+  def CreateGeomtricModel(self, FuselageRadius,  TailBoomLength, TailBoomRadius, RotorCylinderLength, RotorCylinderInnerRadius, RotorCylinderOuterRadius, MainRotorRadius, TailRotorRadius, CreateComponentAxesIsChecked=False):
     CreateModelsLogic = slicer.modules.createmodels.logic()
     
     # Fuselage
@@ -101,7 +101,7 @@ class Helicopter():
     self.TailRotorGeometricModel.ApplyTransform(FuselageToTailNode.GetTransformToParent())
     self.TailRotorGeometricModel.HardenTransform()
     
-    if CreateAxesIsChecked:
+    if CreateComponentAxesIsChecked:
       self.FuselageAxes = CreateModelsLogic.CreateCoordinate(FuselageRadius * 2, FuselageRadius / 5)
       self.FuselageAxes.SetName("FuselageAxes")
       
@@ -121,7 +121,8 @@ class Helicopter():
       self.RotorAxes.HardenTransform()
     # No need for tail rotor axes, identical to cylinder
 
-  def ComputeDynamicsProperties(self, FuselageMass, FuselageRadius, TailBoomMass, TailBoomLength, TailBoomRadius, RotorCylinderMass, RotorCylinderLength, RotorCylinderInnerRadius, RotorCylinderOuterRadius, MainRotorMass, MainRotorRadius, TailRotorMass, TailRotorRadius, CreateAxesIsChecked=False):
+  def ComputeDynamicsProperties(self, FuselageMass, FuselageRadius, TailBoomMass, TailBoomLength, TailBoomRadius, RotorCylinderMass, RotorCylinderLength, RotorCylinderInnerRadius, RotorCylinderOuterRadius, MainRotorMass, MainRotorRadius, TailRotorMass, TailRotorRadius, CreateAxesIsChecked=False, CreateHeliAxesIsCheccked=False):
+    CreateModelsLogic = slicer.modules.createmodels.logic()
     self.TotalMass = FuselageMass + TailBoomMass + RotorCylinderMass + MainRotorMass + TailRotorMass
     
     # Compute center of mass (COM)
@@ -163,6 +164,7 @@ class Helicopter():
     slicer.mrmlScene.AddNode(self.FuselageTOCOMNode)
     """
     
+    # ComToFuselage transform
     self.COMToFuselageTransform = vtk.vtkMatrix4x4()
     for dim in range(3):
       self.COMToFuselageTransform.SetElement(dim, 3, self.COM[dim])
@@ -171,11 +173,23 @@ class Helicopter():
     self.COMToFuselageNode.SetName('COMToFuselage')
     slicer.mrmlScene.AddNode(self.COMToFuselageNode)
     
+    # FuselageToCom transform
+    self.FuselageToCOMTransform = self.COMToFuselageTransform
+    self.FuselageToCOMTransform.Invert()
+    self.FuselageToCOMNode = slicer.vtkMRMLTransformNode()
+    self.FuselageToCOMNode.SetAndObserveMatrixTransformToParent(self.FuselageToCOMTransform)
+    self.FuselageToCOMNode.SetName('FuselageToCOM')
+    slicer.mrmlScene.AddNode(self.FuselageToCOMNode)
     
+    if CreateHeliAxesIsCheccked:
+      self.HeliAxes = CreateModelsLogic.CreateCoordinate(FuselageRadius * 2, FuselageRadius / 5)
+      self.HeliAxes.SetName('HeliAxes')
+      self.HeliAxes.ApplyTransform(self.FuselageTOCOMNode.GetTransformToParent())
+      self.HeliAxes.HardenTransform()
     
     print self.I  
     
-  def
+  #def
     
 #
 # HelicopterBuilder
