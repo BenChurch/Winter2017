@@ -31,6 +31,15 @@ for Param in enumerate(SearchSpaceStart):
   Bounds.append([0.0, 1.0])
   
 def OptObjFun(Params, Unexpl, Expl):
+  """
+  Beta = 3.0
+  ConfusionMatrix = v2m.PredictExploits(Unexpl, Expl, Params, 7.5)
+  Sensitivity = v2m.ComputeSensitivity(ConfusionMatrix)
+  Precision = v2m.ComputePrecision(ConfusionMatrix)
+  Fmeasure = ((1.0 + (Beta**2)) * Precision * Sensitivity) / (((Beta**2) * Precision) + (Sensitivity))
+  print(Fmeasure, Params)
+  return (1.0 - Fmeasure)
+  """
   return 1 - v2m.ComputeICC(Params, Unexpl, Expl)
   
 result = (minimize(OptObjFun, SearchSpaceStart, (Unexploited, Exploited), 'SLSQP', None, None, None, Bounds))

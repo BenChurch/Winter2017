@@ -17,6 +17,8 @@ NumParams = 18  # How many parameters to read from each row
 OutputDir = './/'
 OutputFile = 'Metrics.csv'
 
+OriginalParameters = [0.395, 0.646, 1.0, 0.35, 0.61, 0.71, 0.45, 0.56, 0.704, 0, 0.275, 0.66, 0, 0.275, 0.66, 0, 0.275, 0.66]
+
 def Vector2BaseScore(Vector, Params): 
   # Expecting a 6 element array of chars indicating base score metric values
   # Expecting 6 3D arrays in ParamSets = [avParams, acParams, auParams, confParams, integParams = [1,2,3], availParams]
@@ -144,8 +146,9 @@ def ComputeICC(Params, Unexpl, Expl):
   # Try just the exploited ICC first
   ICCexpl = MSSextraExpl / (MSSextraExpl + MSSintraExpl)
   ICCUnexpl = MSSextraUnexpl / (MSSextraUnexpl + MSSintraUnexpl)
+  CompICC = ((ICCexpl * 2) + (ICCUnexpl * 1)) / 3.0
   
-  CompICC = ((ICCUnexpl * len(Expl)) + (ICCexpl * len(Unexpl))) / (len(Unexpl) + len(Expl))
+  #CompICC = ((ICCUnexpl * len(Expl)) + (ICCexpl * len(Unexpl))) / (len(Unexpl) + len(Expl))
   #print("Params: ", Params)
   #print("CompICC: ", CompICC)
   #print("")
@@ -200,15 +203,15 @@ def PredictExploits(Unexploited, Exploited, Params, Threshold):       # Combines
   TP = 0
   FN = 0
   for VulnScore in ExplScores:
-    print(VulnScore)
+    #print(VulnScore)
     if VulnScore >= Threshold: TP += 1
     else: FN += 1
     
-  return [[TP, TN], [FP, FN]]
+  return [[TP, FN], [FP, TN]]
   
 def ComputeSensitivity(ConfusionMatrix):
   TPs = float(ConfusionMatrix[0][0])
-  FNs = float(ConfusionMatrix[1][1])
+  FNs = float(ConfusionMatrix[0][1])
   return (TPs / (TPs + FNs))
 
 def ComputePrecision(ConfusionMatrix):
