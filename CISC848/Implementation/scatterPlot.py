@@ -106,6 +106,24 @@ with open(DataDir + UnexploitedCsv, encoding='utf-8') as f:
     UnexploitedScores.append(CurrentScore) 
     OptUnexploitedScores.append(OptScore)
  
+# Find max and min score to renormalize
+maxScore = 10
+minScore = 0
+for Score in OptExploitedScores + OptUnexploitedScores:
+  if Score > maxScore: 
+    maxScore = Score
+    continue
+  if Score < minScore:
+    minScore = Score
+    continue
+    
+# Renormalize
+for i, Score in enumerate(OptExploitedScores):
+  OptExploitedScores[i] = (Score + minScore) / ((maxScore - minScore) / 10.0)
+for i, Score in enumerate(OptUnexploitedScores):
+  OptUnexploitedScores[i] = (Score + minScore) / ((maxScore - minScore) / 10.0)
+  
+
 """ 
 Exp = plt.scatter(np.ones(len(ExploitedScores)), ExploitedScores, s=10)
 Unexp = plt.scatter(np.zeros(len(UnexploitedScores)), UnexploitedScores, s=10)
