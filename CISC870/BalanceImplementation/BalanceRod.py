@@ -5,63 +5,94 @@ import matplotlib as mpl
 class FuzzyLogic():
   #def __init__(self)
   import numpy as np
-  class UnboundedTrap():
-    def __init__(self, LeftJog, RightJog):    # LeftFoot = (x1,y1); RightFoot = (x2,y2)      
-      self.LJ = LeftJog
-      self.RJ = RightJog
+  
+  class Trapezoid():                            # Reduces to triangle when LS = RS
+    def __init__(self, LF, LS, RS, RF):         # Points are of the form (x,mu) where mu is membership, 0 at feet and 1 at shoulders
+      # Left being lesser in x than the right
+      self.LeftFoot = LF
+      self.LeftShoulder = LS
+      self.RightShoulder = RS
+      self.RightFoot = RF
+      
+      # Can break truncated (by membership value) trapezoid down into these sections
+      self.LeftTriangleArea = 0
+      self.CenterRectangleArea = 0
+      self.RightTriangleArea = 0
+      self.Area = 0
+      self.COA = 0    # Center of area
+      
       self.Membership = 0
-      # Determine equation of line between feet
-      self.slope = (self.RJ[0] - self.LJ[0]) / (self.RJ[1] - self.LJ[1])
-    
-    def ComputeMembership(self, CrispValue):
-      if np.sign(self.slope) < 0:
-        if CrispValue > self.RJ[0]: 
-          self.Membership = 0
-          return
-        if CrispValue < self.LJ[0]:
-          self.Membership = 0
-          return
-        else: 
-          self.Membership = 1 + (self.slope * (CrispValue - self.LJ[0]))
-          return
-      else: # if slope is +ve
-        if CrispValue > self.RJ[0]:
-          self.Membership = 1
-          return
-        if CrispValue < self.LJ[0]:
-          self.Membership = 0
-        else:
-          self.Membership = 0 + (self.slope * (CrispValue - self.LJ[0]))
-          
-  class BoundedTrap():      # Should reduce to triangle when LeftShoulder == RightShoulder
-    def __init__(self, LeftFoot, LeftShoulder, RightShoulder, RightFoot):
-      self.LF = LeftFoot
-      self.LS = LeftShoulder
-      self.RS = RightShoulder
-      self.RF = RightFoot
-      self.Membership = 0
-      self.LeftSlope = (self.LS - self.LF) / (self.LS - self.LF)
-      self.RightSlope = (self.RF - self.RS) / (self.RF - self.RS)
       
     def ComputeMembership(self, CrispValue):
-      if CrispValue < self.LF or CrispValue > self.RF:
+      if CrispValue < self.LeftFoot[0]:
         self.Membership = 0
         return
-      if CrispValue > self.LS and CrispValue < self.RS:
-        self.Membership = 1
+        
+      if CrispValue >= self.LeftFoot[0] and CrispValue < self.LeftShoulder[0]:
+        slope = (self.LeftShoulder[1] - self.LeftFoot[1]) / (self.LeftShoulder[0] - self.LeftFoot[0])
+        self.Membership = self.LeftFoot[1] + (slope * (CrispValue - self.LeftFoot[0]))
+        self.LeftTriangleArea = (1.0/2.0) * (CrispValue - self.LeftFoot[0]) * (self.Membership)
+        self.RightTriangleArea = (1.0/2.0) * ((self.Membership / 1.0) * (self.RightFoot[0] - self.RightShoulder[0])) * self.Membership
+        self.CenterRectangleArea = self.Membership * ((self.RightFoot[0] - self.LeftFoot[0]) - (CrispValue - self.LeftFoot[0]) - ((self.Membership / 1.0) * (self.RightFoot[0] - self.RightShoulder[0])))
         return
-      if CrispValue > self.LS:   # crisp value falls on right slope
-        self.Membership = 1 + (self.RightSlope * (CrispValue - self.RS))
+        
+      if CrispValue >= self.LeftShoulder[0] and CrispValue < self.RightShoulder[0]:
+        self.Membership = 1.0
+        self.LeftTriangleArea = (1.0/2.0) * (self.LeftShoulder[0] - self.LeftFoot[0]) * (self.Membership)
+        self.RightTriangleArea = (1.0/2.0) * (self.RightFoot[0] - self.RightShoulder[0]) * (self.Membership)
+        self.CenterRectangleArea = self.Membership * (self.RightShoulder[0] - self.LeftShoulder[0])
         return
-      if CrispValue < self.RS:   # crisp value falls on left slope
-        self.Membership = self.LeftSlope * (CrispValue - self.LF)
+        
+      if CrispValue >= self.RightShoulder[0] and CrispValue < self.RightFoot[0]:
+        slope = (self.RightFoot[1] - self.RightShoulder[1]) / (self.RightFoot[0] - self.RightShoulder[0])
+        self.Membership = self.LeftFoot[1] + (slope * (CrispValue - self.LeftFoot[0]))
+        self.LeftTriangleArea = (1.0/2.0) * ((self.Membership / 1.0) * (self.LeftShoulder[0] - self.LeftFoot[0])) * self.Membership
+        self.RightTriangleArea = (1.0/2.0) * (self.RightFoot[0] - CrispValue) * (self.Membership)
+        self.CenterRectangleArea = self.Membership * ((self.RightFoot[0] - self.LeftFoot[0]) - (CrispValue - self.LeftFoot[0]) - ((self.Membership / 1.0) * (self.RightFoot[0] - self.RightShoulder[0])))
         return
-
+        
+      if CrispValue > self.RightFoot[0]:
+        self.Membership = 0
+        return
+        
+    def ComputeArea(self):
+      # Uses truncation of membership function
+      if self.LeftFoot[0] == self.LeftShoulder[0]:
+        self.LeftTriangleArea = 0
+      else:
+        
+      self.Area = self.LeftTriangleArea + self.CenterRectangleArea + self.RightTriangleArea 
+      self.ComputeCenterOfArea()
+  
+    def ComputeCenterOfArea(self):
+      LeftTriangleCenter = self.LeftFoot[0] + ((2.0/3.0) * (self.Membership / 1.0) * (self.LeftShoulder[0] - self.LeftFoot[0]))
+      RightTriangleCenter = self.RightShoulder[0] + ((1.0/3.0) * ((1.0 - self.Membership) / 1.0) * (self.RightFoot [0] - self.RightShoulder[0]))
+      CenterRectangleCenter = (((self.RightShoulder[0] + (1.0 - self.Membership) / 1.0) * (self.RightFoot [0] - self.RightShoulder[0])) + (self.LeftFoot[0] + (self.Membership / 1.0) * (self.LeftShoulder[0] - self.LeftFoot[0])))/2.0
+      self.COA = ((self.LeftTriangleArea * LeftTriangleCenter) + (self.CenterRectangleArea * CenterRectangleCenter) + (self.RightTriangleArea * RightTriangleCenter)) / (self.LeftTriangleArea + self.CenterRectangleArea + self.RightTriangleArea)
+    
+    def PrintMembershipFunction(self, OutputDir, ImageName):
+      import numpy as np
+      import matplotlib.pyplot as plt
+      PointsPerSegment = 50
+      
+      # Start with complete membership function, highlight actual value after
+      LeftSlopeDomain = np.linspace(self.LeftFoot[0], self.LeftShoulder[0], PointsPerSegment)
+      LeftSlopeRange = np.linspace(0, 1, PointsPerSegment)
+      PlateauDomain = np.linspace(self.LeftShoulder[0], self.RightShoulder[0], PointsPerSegment)
+      PlateauRange = np.linspace(1, 1, PointsPerSegment)
+      RightSlopeDomain = np.linspace(self.RightShoulder[0], self.RightFoot[0], PointsPerSegment)
+      RightSlopeRange = np.linspace(1, 0, PointsPerSegment)
+      ax = plt.axes()
+      ax.plot(LeftSlopeDomain, LeftSlopeRange, 'k.', markersize=3)
+      ax.plot(PlateauDomain, PlateauRange, 'k.', markersize=3)
+      ax.plot(RightSlopeDomain, RightSlopeRange, 'k.', markersize=3)
+      plt.show()
+        
   # Recursively defined Conjunction (and Disjunction) allow multiple rules or sets to be combined
   def FuzzyConjunction(self, Memberships, tNorm):
     if tNorm == 'min':
       if len(Memberships) > 1:
-        return min(Memberships[0], self.FuzzyConjunction(Memberships[1:]), 'min')
+        return min(Memberships[0], self.FuzzyConjunction(Memberships[1:], 'min'))
       else:
         return Memberships[0]
     else:
@@ -71,7 +102,7 @@ class FuzzyLogic():
   def FuzzyDisjunction(self, Memberships, sNorm):
     if sNorm == "max":
       if len(Memberships) > 1:
-        return max(Memberships[0], self.FuzzyDisjunction(Memberships[1:]), 'max')
+        return max(Memberships[0], self.FuzzyDisjunction(Memberships[1:], 'max'))
       else:
         return Memberships[0]
     else:
@@ -93,6 +124,7 @@ class BalanceBot():
     self.Gravity = 9.81
     self.Time = 0       # Start time, may be used to plot robot responses
     self.dt = 0.25      # Time increment (sec)
+    self.RodDragCoefficient = 10    # Force (per rod length - wind speed) in N
     
     # Robot properties
     self.BotMass = BM         # (kg)
@@ -117,33 +149,33 @@ class BalanceBot():
     self.BotSize = 0.1            # Bot size (width and height, square bot) in meters for plotting
     
     # Fuzzy sets
-    self.PosTiltErrorLarge = self.FL.UnboundedTrap((20, 0), (40, 1))
-    self.PosTiltErrorMed = self.FL.BoundedTrap(0, 20, 20, 40)
-    self.PosTiltErrorSmall = self.FL.UnboundedTrap((0, 1), (20, 0))
+    self.PosTiltErrorLarge = self.FL.Trapezoid((20,0), (40,1), (90,1), (90,0))
+    self.PosTiltErrorMed = self.FL.Trapezoid((0,0), (20,1), (20,1), (40,0))
+    self.PosTiltErrorSmall = self.FL.Trapezoid((0,0), (0,1), (0,1), (20,0))
 
-    self.PosWindHigh = self.FL.UnboundedTrap((0.5, 0), (1.0, 1.0))            
-    self.PosWindMed = self.FL.BoundedTrap(0, 0.5, 0.5, 1)                   # Wind speed into direction of tilt; helping wind is always Low
-    self.PosWindLow = self.FL.UnboundedTrap((0, 1), (0.5, 0))                 
+    self.PosWindHigh = self.FL.Trapezoid((0.5,0), (1,1), (1,1), (1,0))            
+    self.PosWindMed = self.FL.Trapezoid((0,0), (0.5,1), (0.5,1), (1,0))                   # Wind speed into direction of tilt; helping wind is always Low
+    self.PosWindLow = self.FL.Trapezoid((0,0), (0,1), (0,1), (0.5,0))                 
     
-    self.PosMotorResponseLow = self.FL.UnboundedTrap((0,1), (0.25,0))
-    self.PosMotorResponseMedLow = self.FL.BoundedTrap(0, 0.25, 0.25, 0.5)
-    self.PosMotorResponseMed = self.FL.BoundedTrap(0.25, 0.5, 0.5, 0.75)
-    self.PosMotorResponseMedHigh = self.FL.BoundedTrap(0.5, 0.75, 0.75, 1)
-    self.PosMotorResponseHigh = self.FL.UnboundedTrap((0.75, 0), (1, 1))
+    self.PosMotorResponseLow = self.FL.Trapezoid((0,0), (0,1), (0,1), (0.25,0))
+    self.PosMotorResponseMedLow = self.FL.Trapezoid((0,0), (0.25,1), (0.25,1), (0.5,0))
+    self.PosMotorResponseMed = self.FL.Trapezoid((0.25,0), (0.5,1), (0.5,1), (0.75,0))
+    self.PosMotorResponseMedHigh = self.FL.Trapezoid((0.5,0), (0.75,1), (0.75,1), (1,0))
+    self.PosMotorResponseHigh = self.FL.Trapezoid((0.75, 0), (1,1), (1, 1), (1,0))
 
-    self.NegTiltErrorLarge = self.FL.UnboundedTrap((-20, 0), (-40, 1))
-    self.NegTiltErrorMed = self.FL.BoundedTrap(0, -20, -20, -40)
-    self.NegTiltErrorSmall = self.FL.UnboundedTrap((0, 1), (-20, 0))
+    self.NegTiltErrorLarge = self.FL.Trapezoid((-20, 0), (-40,1), (-40, 1), (-40,0))
+    self.NegTiltErrorMed = self.FL.Trapezoid((0,0), (-20,1), (-20,1), (-40,0))
+    self.NegTiltErrorSmall = self.FL.Trapezoid((0,0), (0,1), (0,1), (-20, 0))
     
-    self.NegWindHigh = self.FL.UnboundedTrap((-0.5, 0), (-1.0, 1.0))            
-    self.NegWindMed = self.FL.BoundedTrap(0, -0.5, -0.5, -1)      
-    self.NegWindLow = self.FL.UnboundedTrap((0, 1), (-0.5, 0))    
+    self.NegWindHigh = self.FL.Trapezoid((-0.5, 0), (-1, 1), (-1, 1), (-1, 0))            
+    self.NegWindMed = self.FL.Trapezoid((0,0), (-0.5,1), (-0.5,1), (-1,0))      
+    self.NegWindLow = self.FL.Trapezoid((0,0), (0, 1), (0,1), (-0.5, 0))    
     
-    self.NegMotorResponseLow = self.FL.UnboundedTrap((0,1), (0.25,0))
-    self.NegMotorResponseMedLow = self.FL.BoundedTrap(0, 0.25, 0.25, 0.5)
-    self.NegMotorResponseMed = self.FL.BoundedTrap(0.25, 0.5, 0.5, 0.75)
-    self.NegMotorResponseMedHigh = self.FL.BoundedTrap(0.5, 0.75, 0.75, 1)
-    self.NegMotorResponseHigh = self.FL.UnboundedTrap((0.75, 0), (1, 1))
+    self.NegMotorResponseLow = self.FL.Trapezoid((0,0), (0,1), (0,1), (0.25,0))
+    self.NegMotorResponseMedLow = self.FL.Trapezoid((0,0), (0.25,1), (0.25,1), (0.5,0))
+    self.NegMotorResponseMed = self.FL.Trapezoid((0.25,0), (0.5,1), (0.5,1), (0.75,0))
+    self.NegMotorResponseMedHigh = self.FL.Trapezoid((0.5,0), (0.75,1), (0.75,1), (1,0))
+    self.NegMotorResponseHigh = self.FL.Trapezoid((0.75, 0), (1, 1), (1, 1), (1, 0))
        
   def DrawBotToFile(self, FileName):
     import matplotlib.pyplot as plt
@@ -163,14 +195,19 @@ class BalanceBot():
     ax.clear()
     
   def UpdateFuzzySets(self):
-    self.TiltErrorLarge.ComputeMembership(self.Tilt)
-    self.TiltErrorMed.ComputeMembership(self.Tilt)
-    self.TiltErrorSmall.ComputeMembership(self.Tilt)
-    
     RelativeWind = self.WindSpeed - self.Velocity
-    self.WindHigh.ComputeMembership(RelativeWind)
-    self.WindMed.ComputeMembership(RelativeWind)
-    self.WindLow.ComputeMembership(RelativeWind)
+    ImplicationMethod = 'KD'
+    tNorm = 'min'
+    sNorm = 'max'
+    
+    # ------- Positive direction sets - CW rotations, right-wards translation ------- #
+    self.PosTiltErrorLarge.ComputeMembership(self.Tilt)
+    self.PosTiltErrorMed.ComputeMembership(self.Tilt)
+    self.PosTiltErrorSmall.ComputeMembership(self.Tilt)
+    
+    self.PosWindHigh.ComputeMembership(RelativeWind)
+    self.PosWindMed.ComputeMembership(RelativeWind)
+    self.PosWindLow.ComputeMembership(RelativeWind)
     
     # (Re)initialize MotorResponseRules
     PosOutputLowRules = [0, 0]
@@ -179,96 +216,135 @@ class BalanceBot():
     PosOutputMedHighRules = [0, 0]
     PosOutputHighRules = [0, 0]
     
-    
-    # ------- Positive direction sets - CW rotations, right-wards translation ------- #
-    
     # TiltErrorSmall and WindLow --> MotorResponseMagnitudeLow
-    PosOutputLowRules[0] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction(self.PosTiltErrorSmall.Membership, self.PosWindLow.Membership), 1)
+    PosOutputLowRules[0] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction([self.PosTiltErrorSmall.Membership, self.PosWindLow.Membership], tNorm), 1, ImplicationMethod)
     
     # TiltErrorSmall and WindMed --> MotorResponseMagnitudeLow
-    PosOutputLowRules[1] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction(self.PosTiltErrorSmall.Membership, self.PosWindMed.Membership), 1)
+    PosOutputLowRules[1] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction([self.PosTiltErrorSmall.Membership, self.PosWindMed.Membership], tNorm), 1, ImplicationMethod)
     
-    self.PosMotorResponseLow.Membership = self.FL.FuzzyDisjunction(PosOutputLowRules)
+    self.PosMotorResponseLow.Membership = self.FL.FuzzyDisjunction(PosOutputLowRules, sNorm)
     
     # TiltErrorSmall and WindHigh --> MotorResponseMagnitudeMed
-    PosOutputMedLowRules[0] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction(self.PosTiltErrorSmall.Membership, self.PosWindHigh.Membership), 1)
+    PosOutputMedLowRules[0] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction([self.PosTiltErrorSmall.Membership, self.PosWindHigh.Membership], tNorm), 1, ImplicationMethod)
     
-    self.PosMotorResponseMedLow.Membership = self.FL.FuzzyDisjunction(PosOutputMedLowRules)
+    self.PosMotorResponseMedLow.Membership = self.FL.FuzzyDisjunction(PosOutputMedLowRules, sNorm)
     
     # TiltErrorMed and WindLow --> MotorResponseMagnitudeMed
-    PosOutputMedRules[0] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction(self.PosTiltErrorMed.Membership, self.PosWindLow.Membership), 1)
+    PosOutputMedRules[0] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction([self.PosTiltErrorMed.Membership, self.PosWindLow.Membership], tNorm), 1, ImplicationMethod)
     
     # TiltErrorMed and WindMed --> MotorResponseMagnitudeMed
-    PosOutputMedRules[1] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction(self.PosTiltErrorMed.Membership, self.PosWindMed.Membership), 1)
+    PosOutputMedRules[1] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction([self.PosTiltErrorMed.Membership, self.PosWindMed.Membership], tNorm), 1, ImplicationMethod)
     
-    self.PosMotorResponseMed.Membership = self.FL.FuzzyDisjunction(PosOutputMedRules)
+    self.PosMotorResponseMed.Membership = self.FL.FuzzyDisjunction(PosOutputMedRules, sNorm)
     
     # TiltErrorMed and WindHigh --> MotorResponseMagnitudeMedHigh
-    PosOutputMedHighRules[0] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction(self.PosTiltErrorMed.Membership, self.PosWindHigh.Membership), 1)
+    PosOutputMedHighRules[0] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction([self.PosTiltErrorMed.Membership, self.PosWindHigh.Membership], tNorm), 1, ImplicationMethod)
     
     # TiltErrorLarge and WindLow --> MotorResponseMagnitudeMedHigh
-    PosOutputMedHighRules[1] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction(self.PosTiltErrorLarge.Membership, self.PosWindLow.Membership), 1)
+    PosOutputMedHighRules[1] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction([self.PosTiltErrorLarge.Membership, self.PosWindLow.Membership], tNorm), 1, ImplicationMethod)
     
-    self.PosMotorResponseMedHigh.Membership = self.FL.FuzzyDisjunction(PosOutputMedHighRules)
+    self.PosMotorResponseMedHigh.Membership = self.FL.FuzzyDisjunction(PosOutputMedHighRules, sNorm)
     
     # TiltErrorLarge and WindMed --> MotorResponseMagnitudeHigh
-    PosOutputHighRules[0] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction(self.PosTiltErrorLarge.Membership, self.PosWindMed.Membership), 1)
+    PosOutputHighRules[0] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction([self.PosTiltErrorLarge.Membership, self.PosWindMed.Membership], tNorm), 1, ImplicationMethod)
     
     # TiltErrorLarge and WindHigh --> MotorResponseMagnitudeHigh
-    PosOutputHighRules[1] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction(self.PosTiltErrorLarge.Membership, self.PosWindHigh.Membership), 1)
+    PosOutputHighRules[1] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction([self.PosTiltErrorLarge.Membership, self.PosWindHigh.Membership], tNorm), 1, ImplicationMethod)
     
-    self.PosMotorResponseHigh.Membership = self.FL.FuzzyDisjunction(PosOutputHighRules)
+    self.PosMotorResponseHigh.Membership = self.FL.FuzzyDisjunction(PosOutputHighRules, sNorm)
+    
+    self.PosMotorResponseLow.ComputeArea()
+    self.PosMotorResponseMedLow.ComputeArea()
+    self.PosMotorResponseMed.ComputeArea()
+    self.PosMotorResponseMedHigh.ComputeArea()
+    self.PosMotorResponseHigh.ComputeArea()
     
     # ------- Negative direction sets - CCW rotations, left-wards translation ------- #
-
+    self.NegTiltErrorLarge.ComputeMembership(self.Tilt)
+    self.NegTiltErrorMed.ComputeMembership(self.Tilt)
+    self.NegTiltErrorSmall.ComputeMembership(self.Tilt)
+    
+    self.NegWindHigh.ComputeMembership(RelativeWind)
+    self.NegWindMed.ComputeMembership(RelativeWind)
+    self.NegWindLow.ComputeMembership(RelativeWind)
+    
+    # (Re)initialize MotorResponseRules
+    NegOutputLowRules = [0, 0]
+    NegOutputMedLowRules = [0]
+    NegOutputMedRules = [0, 0,]
+    NegOutputMedHighRules = [0, 0]
+    NegOutputHighRules = [0, 0]
+    
     # TiltErrorSmall and WindLow --> MotorResponseMagnitudeLow
-    NegOutputLowRules[0] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction(self.NegTiltErrorSmall.Membership, self.NegWindLow.Membership), 1)
+    NegOutputLowRules[0] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction([self.NegTiltErrorSmall.Membership, self.NegWindLow.Membership], tNorm), 1, ImplicationMethod)
     
     # TiltErrorSmall and WindMed --> MotorResponseMagnitudeLow
-    NegOutputLowRules[1] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction(self.NegTiltErrorSmall.Membership, self.NegWindMed.Membership), 1)
+    NegOutputLowRules[1] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction([self.NegTiltErrorSmall.Membership, self.NegWindMed.Membership], tNorm), 1, ImplicationMethod)
     
-    self.NegMotorResponseLow.Membership = self.FL.FuzzyDisjunction(NegOutputLowRules)
+    self.NegMotorResponseLow.Membership = self.FL.FuzzyDisjunction(NegOutputLowRules, sNorm)
     
     # TiltErrorSmall and WindHigh --> MotorResponseMagnitudeMed
-    NegOutputMedLowRules[0] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction(self.NegTiltErrorSmall.Membership, self.NegWindHigh.Membership), 1)
+    NegOutputMedLowRules[0] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction([self.NegTiltErrorSmall.Membership, self.NegWindHigh.Membership], tNorm), 1, ImplicationMethod)
     
-    self.PosMotorResponseMedLow.Membership = self.FL.FuzzyDisjunction(PosOutputMedLowRules)
+    self.PosMotorResponseMedLow.Membership = self.FL.FuzzyDisjunction(PosOutputMedLowRules, sNorm)
     
     # TiltErrorMed and WindLow --> MotorResponseMagnitudeMed
-    NegOutputMedRules[0] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction(self.NegTiltErrorMed.Membership, self.NegWindLow.Membership), 1)
+    NegOutputMedRules[0] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction([self.NegTiltErrorMed.Membership, self.NegWindLow.Membership], tNorm), 1, ImplicationMethod)
     
     # TiltErrorMed and WindMed --> MotorResponseMagnitudeMed
-    NegOutputMedRules[1] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction(self.NegTiltErrorMed.Membership, self.NegWindMed.Membership), 1)
+    NegOutputMedRules[1] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction([self.NegTiltErrorMed.Membership, self.NegWindMed.Membership], tNorm), 1, ImplicationMethod)
     
-    self.PosMotorResponseMed.Membership = self.FL.FuzzyDisjunction(PosOutputMedRules)
+    self.PosMotorResponseMed.Membership = self.FL.FuzzyDisjunction(PosOutputMedRules, sNorm)
     
     # TiltErrorMed and WindHigh --> MotorResponseMagnitudeMedHigh
-    NegOutputMedHighRules[0] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction(self.NegTiltErrorMed.Membership, self.NegWindHigh.Membership), 1)
+    NegOutputMedHighRules[0] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction([self.NegTiltErrorMed.Membership, self.NegWindHigh.Membership], tNorm), 1, ImplicationMethod)
     
     # TiltErrorLarge and WindLow --> MotorResponseMagnitudeMedHigh
-    NegOutputMedHighRules[1] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction(self.NegTiltErrorLarge.Membership, self.NegWindLow.Membership), 1)
+    NegOutputMedHighRules[1] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction([self.NegTiltErrorLarge.Membership, self.NegWindLow.Membership], tNorm), 1, ImplicationMethod)
     
-    self.PosMotorResponseMedHigh.Membership = self.FL.FuzzyDisjunction(PosOutputMedHighRules)
+    self.PosMotorResponseMedHigh.Membership = self.FL.FuzzyDisjunction(PosOutputMedHighRules, sNorm)
     
     # TiltErrorLarge and WindMed --> MotorResponseMagnitudeHigh
-    NegOutputHighRules[0] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction(self.NegTiltErrorLarge.Membership, self.NegWindMed.Membership), 1)
+    NegOutputHighRules[0] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction([self.NegTiltErrorLarge.Membership, self.NegWindMed.Membership], tNorm), 1, ImplicationMethod)
     
     # TiltErrorLarge and WindHigh --> MotorResponseMagnitudeHigh
-    NegOutputHighRules[1] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction(self.NegTiltErrorLarge.Membership, self.NegWindHigh.Membership), 1)
+    NegOutputHighRules[1] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction([self.NegTiltErrorLarge.Membership, self.NegWindHigh.Membership], tNorm), 1, ImplicationMethod)
     
-    self.NegMotorResponseHigh.Membership = self.FL.FuzzyDisjunction(NegOutputHighRules)
+    self.NegMotorResponseHigh.Membership = self.FL.FuzzyDisjunction(NegOutputHighRules, sNorm)
     
-    
-  #def UpdateControls(self):
-    #self.MotorForce = self.Defuzzify
+    self.NegMotorResponseLow.ComputeArea()
+    self.NegMotorResponseMedLow.ComputeArea()
+    self.NegMotorResponseMed.ComputeArea()
+    self.NegMotorResponseMedHigh.ComputeArea()
+    self.NegMotorResponseHigh.ComputeArea()
+  
+  def UpdateControls(self):
+    import numpy as np
+    # Use Center of Mass method
+    NegMotorResponses = [self.NegMotorResponseLow.Area, self.NegMotorResponseMedLow.Area, self.NegMotorResponseMed.Area, self.NegMotorResponseMedHigh.Area, self.NegMotorResponseHigh.Area]
+    PosMotorResponses = [self.PosMotorResponseLow.Area, self.PosMotorResponseMedLow.Area, self.PosMotorResponseMed.Area, self.PosMotorResponseMedHigh.Area, self.PosMotorResponseHigh.Area]
+    if sum(NegMotorResponses) > sum(PosMotorResponses):
+      # Resolve to move in negative direction, but how fast?
+      TotalSetMass = self.NegMotorResponseLow.Area + self.NegMotorResponseMedLow.Area + self.NegMotorResponseMed.Area + self.NegMotorResponseMedHigh.Area + self.NegMotorResponseHigh.Area
+      self.MotorForce = self.BotMaxForce * ((self.NegMotorResponseLow.Area * self.NegMotorResponseLow.COA) + (self.NegMotorResponseMedLow.Area * self.NegMotorResponseMedLow.COA) + (self.NegMotorResponseMed.Area * self.NegMotorResponseMed.COA) + (self.NegMotorResponseMedHigh.Area * self.NegMotorResponseMedHigh.COA) + (self.NegMotorResponseHigh.Area * self.NegMotorResponseHigh.COA)) / (TotalSetMass)
+      
+    else:   # Move in positive direction
+      TotalSetMass = self.PosMotorResponseLow.Area + self.PosMotorResponseMedLow.Area + self.PosMotorResponseMed.Area + self.PosMotorResponseMedHigh.Area + self.PosMotorResponseHigh.Area
+      self.MotorForce = self.BotMaxForce * ((self.PosMotorResponseLow.Area * self.PosMotorResponseLow.COA) + (self.PosMotorResponseMedLow.Area * self.PosMotorResponseMedLow.COA) + (self.PosMotorResponseMed.Area * self.PosMotorResponseMed.COA) + (self.PosMotorResponseMedHigh.Area * self.PosMotorResponseMedHigh.COA) + (self.PosMotorResponseHigh.Area * self.PosMotorResponseHigh.COA)) / (TotalSetMass)
   
   def UpdateMechanicalState(self):
-    # Start with BalanceRod
-    GravitationalTorque = self.Gravity * self.RodMass * np.cos(self.Tilt * np.pi / 180.0) * (self.RodLength / 2.0)
-    AccelerationTorque = self.Acceleration * self.RodMass * np.sin(self.Tilt * np.pi / 180.0) * (self.RodLength / 2.0)
     RelativeWind = self.WindSpeed - self.Velocity
     
-    RodTorque = GravitationalTorque + AccelerationTorque
+    self.Acceleration = self.MotorForce / self.BotMass
+    self.Position += 0.5 * (self.Acceleration) * (self.dt ** 2)
+    self.Velocity += self.Acceleration * self.dt
+    
+    # Start with BalanceRod - experiences torques from gravity, bot acceleration, and wind 
+    GravitationalTorque = self.Gravity * self.RodMass * np.cos(self.Tilt * np.pi / 180.0) * (self.RodLength / 2.0)
+    AccelerationTorque = self.Acceleration * self.RodMass * np.sin(self.Tilt * np.pi / 180.0) * (self.RodLength / 2.0)
+    WindTorque = RelativeWind * self.RodLength * np.sin(self.Tilt * np.pi / 180.0) * self.RodDragCoefficient * (self.RodLength/2.0)
+    RodTorque = GravitationalTorque + AccelerationTorque + WindTorque
+    
     #print(GravitationalTorque, AccelerationTorque)
     self.AngularAcceleration = RodTorque / self.RodMomentOfInertia
     self.Tilt += 0.5 * self.AngularAcceleration * (self.dt ** 2)
@@ -276,11 +352,18 @@ class BalanceBot():
     
     
   def StartBalancing(self):
+    self.UpdateMechanicalState()
     self.UpdateFuzzySets()
-    #self.UpdateControls()
-    #self.UpdateMechanicalState()
+    self.UpdateControls()
+
+
     
 Bot = BalanceBot(10, 10, 0.2, 1)
+#Bot.StartBalancing()
+#Bot.PosTiltErrorLarge.PrintMembershipFunction('.\\', 'Membership.png')
+
+
 for RotTest in range(100):
-  Bot.UpdateMechanicalState()
+  Bot.StartBalancing()
   Bot.DrawBotToFile('test' + str(RotTest) + '.png')
+
