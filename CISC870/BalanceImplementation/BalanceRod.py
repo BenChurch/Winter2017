@@ -19,55 +19,68 @@ class FuzzyLogic():
       self.CenterRectangleArea = 0
       self.RightTriangleArea = 0
       self.Area = 0
-      self.COA = 0    # Center of area
+      self.COA = None    # Center of area - remains None for later checks in defuzzification
       
+      self.CrispValue = 0 # Keep this from each membership value recomputation - useful in fuzzy set geometry
       self.Membership = 0
       
-    def ComputeMembership(self, CrispValue):
-      if CrispValue < self.LeftFoot[0]:
+    def ComputeMembership(self, CV):
+      self.CrispValue = CV
+      if self.CrispValue < self.LeftFoot[0]:
         self.Membership = 0
+        self.COA = None
         return
         
-      if CrispValue >= self.LeftFoot[0] and CrispValue < self.LeftShoulder[0]:
+      if self.CrispValue >= self.LeftFoot[0] and self.CrispValue < self.LeftShoulder[0]:
         slope = (self.LeftShoulder[1] - self.LeftFoot[1]) / (self.LeftShoulder[0] - self.LeftFoot[0])
-        self.Membership = self.LeftFoot[1] + (slope * (CrispValue - self.LeftFoot[0]))
-        self.LeftTriangleArea = (1.0/2.0) * (CrispValue - self.LeftFoot[0]) * (self.Membership)
-        self.RightTriangleArea = (1.0/2.0) * ((self.Membership / 1.0) * (self.RightFoot[0] - self.RightShoulder[0])) * self.Membership
-        self.CenterRectangleArea = self.Membership * ((self.RightFoot[0] - self.LeftFoot[0]) - (CrispValue - self.LeftFoot[0]) - ((self.Membership / 1.0) * (self.RightFoot[0] - self.RightShoulder[0])))
+        self.Membership = self.LeftFoot[1] + (slope * (self.CrispValue - self.LeftFoot[0]))
+        #self.LeftTriangleArea = (1.0/2.0) * (self.CrispValue - self.LeftFoot[0]) * (self.Membership)
+        #self.RightTriangleArea = (1.0/2.0) * ((self.Membership / 1.0) * (self.RightFoot[0] - self.RightShoulder[0])) * self.Membership
+        #self.CenterRectangleArea = self.Membership * ((self.RightFoot[0] - self.LeftFoot[0]) - (self.CrispValue - self.LeftFoot[0]) - ((self.Membership / 1.0) * (self.RightFoot[0] - self.RightShoulder[0])))
         return
         
-      if CrispValue >= self.LeftShoulder[0] and CrispValue < self.RightShoulder[0]:
+      if self.CrispValue >= self.LeftShoulder[0] and self.CrispValue < self.RightShoulder[0]:
         self.Membership = 1.0
-        self.LeftTriangleArea = (1.0/2.0) * (self.LeftShoulder[0] - self.LeftFoot[0]) * (self.Membership)
-        self.RightTriangleArea = (1.0/2.0) * (self.RightFoot[0] - self.RightShoulder[0]) * (self.Membership)
-        self.CenterRectangleArea = self.Membership * (self.RightShoulder[0] - self.LeftShoulder[0])
+        #self.LeftTriangleArea = (1.0/2.0) * (self.LeftShoulder[0] - self.LeftFoot[0]) * (self.Membership)
+        #self.RightTriangleArea = (1.0/2.0) * (self.RightFoot[0] - self.RightShoulder[0]) * (self.Membership)
+        #self.CenterRectangleArea = self.Membership * (self.RightShoulder[0] - self.LeftShoulder[0])
         return
         
-      if CrispValue >= self.RightShoulder[0] and CrispValue < self.RightFoot[0]:
+      if self.CrispValue >= self.RightShoulder[0] and self.CrispValue < self.RightFoot[0]:
         slope = (self.RightFoot[1] - self.RightShoulder[1]) / (self.RightFoot[0] - self.RightShoulder[0])
-        self.Membership = self.LeftFoot[1] + (slope * (CrispValue - self.LeftFoot[0]))
-        self.LeftTriangleArea = (1.0/2.0) * ((self.Membership / 1.0) * (self.LeftShoulder[0] - self.LeftFoot[0])) * self.Membership
-        self.RightTriangleArea = (1.0/2.0) * (self.RightFoot[0] - CrispValue) * (self.Membership)
-        self.CenterRectangleArea = self.Membership * ((self.RightFoot[0] - self.LeftFoot[0]) - (CrispValue - self.LeftFoot[0]) - ((self.Membership / 1.0) * (self.RightFoot[0] - self.RightShoulder[0])))
+        self.Membership = self.LeftFoot[1] + (slope * (self.CrispValue - self.LeftFoot[0]))
+        #self.LeftTriangleArea = (1.0/2.0) * ((self.Membership / 1.0) * (self.LeftShoulder[0] - self.LeftFoot[0])) * self.Membership
+        #self.RightTriangleArea = (1.0/2.0) * (self.RightFoot[0] - self.CrispValue) * (self.Membership)
+        #self.CenterRectangleArea = self.Membership * ((self.RightFoot[0] - self.LeftFoot[0]) - (self.CrispValue - self.LeftFoot[0]) - ((self.Membership / 1.0) * (self.RightFoot[0] - self.RightShoulder[0])))
         return
         
-      if CrispValue > self.RightFoot[0]:
+      if self.CrispValue > self.RightFoot[0]:
         self.Membership = 0
+        self.COA = None
         return
         
     def ComputeArea(self):
       # Uses truncation of membership function
       if self.LeftFoot[0] == self.LeftShoulder[0]:
+        LeftTriangleBase = 0
         self.LeftTriangleArea = 0
       else:
-        
-      self.Area = self.LeftTriangleArea + self.CenterRectangleArea + self.RightTriangleArea 
+        LeftTriangleBase = self.Membership*(self.LeftShoulder[0] - self.LeftFoot[0])/(self.LeftShoulder[1] - self.LeftFoot[1])    #self.LeftShoulder[1] - self.LeftFoot[1] == 1 - 0, assumedly
+        self.LeftTriangleArea = (1.0/2.0) * (self.Membership) * (LeftTriangleBase)
+      if self.RightFoot[0] == self.RightShoulder[0]:
+        RightTriangleBase = 0
+        self.RightTriangleArea = 0
+      else:
+        RightTriangleBase = self.Membership * (self.RightFoot[0] - self.RightShoulder[0]) / (self.RightShoulder[1] - self.RightFoot[1])
+        self.RightTriangleArea = (1.0/2.0) * self.Membership * RightTriangleBase
+      self.CenterRectangleArea = ((self.RightFoot[0] - self.LeftFoot[0]) - (LeftTriangleBase) - (RightTriangleBase)) * self.Membership
+      self.Area = self.LeftTriangleArea + self.CenterRectangleArea + self.RightTriangleArea
       self.ComputeCenterOfArea()
   
     def ComputeCenterOfArea(self):
       LeftTriangleCenter = self.LeftFoot[0] + ((2.0/3.0) * (self.Membership / 1.0) * (self.LeftShoulder[0] - self.LeftFoot[0]))
-      RightTriangleCenter = self.RightShoulder[0] + ((1.0/3.0) * ((1.0 - self.Membership) / 1.0) * (self.RightFoot [0] - self.RightShoulder[0]))
-      CenterRectangleCenter = (((self.RightShoulder[0] + (1.0 - self.Membership) / 1.0) * (self.RightFoot [0] - self.RightShoulder[0])) + (self.LeftFoot[0] + (self.Membership / 1.0) * (self.LeftShoulder[0] - self.LeftFoot[0])))/2.0
+      RightTriangleCenter = self.RightFoot[0] - ((2.0/3.0) * (self.Membership / 1.0) * (self.RightFoot [0] - self.RightShoulder[0]))
+      CenterRectangleCenter = ((self.RightFoot[0] - (self.Membership / 1.0) * (self.RightFoot [0] - self.RightShoulder[0])) + (self.LeftFoot[0] + (self.Membership / 1.0) * (self.LeftShoulder[0] - self.LeftFoot[0])))/2.0
       self.COA = ((self.LeftTriangleArea * LeftTriangleCenter) + (self.CenterRectangleArea * CenterRectangleCenter) + (self.RightTriangleArea * RightTriangleCenter)) / (self.LeftTriangleArea + self.CenterRectangleArea + self.RightTriangleArea)
     
     def PrintMembershipFunction(self, OutputDir, ImageName):
@@ -126,6 +139,8 @@ class BalanceBot():
     self.dt = 0.25      # Time increment (sec)
     self.RodDragCoefficient = 10    # Force (per rod length - wind speed) in N
     
+    self.TimeHistory = [self.Time]
+    
     # Robot properties
     self.BotMass = BM         # (kg)
     self.BotMaxForce = BMF    # Maximum force with which bot can accelerate in either direction (N)
@@ -139,11 +154,22 @@ class BalanceBot():
     self.Velocity = 0
     self.Acceleration = 0
     
-    self.Tilt = 10      # Rod starts upright (deg)
+    self.ForceHistory = [self.MotorForce]
+    self.PositionHistory = [self.Position]
+    self.VelocityHistory = [self.Velocity]
+    self.AccelerationHistory = [self.Acceleration]
+    
+    self.Tilt = (np.random.uniform() - 0.5) * 40      # Rod starts upright (deg)
     self.AngularVelocity = (np.random.uniform() - 0.5) * 30            # Start with some initial angular velocity to necessitate adjustment
     self.AngularAcceleration = 0
     
+    self.TiltHistory = [self.Tilt]
+    self.AngularVelocityHistory = [self.AngularVelocity]
+    self.AngularAccelerationHistory = [self.AngularAcceleration]
+    
     self.WindSpeed = (np.random.uniform() - 0.5) * 2                 # Will exert external force on robot and rod
+    
+    self.WindSpeedHistory = [self.WindSpeed]
     
     # Properties for plotting bot
     self.BotSize = 0.1            # Bot size (width and height, square bot) in meters for plotting
@@ -171,11 +197,11 @@ class BalanceBot():
     self.NegWindMed = self.FL.Trapezoid((0,0), (-0.5,1), (-0.5,1), (-1,0))      
     self.NegWindLow = self.FL.Trapezoid((0,0), (0, 1), (0,1), (-0.5, 0))    
     
-    self.NegMotorResponseLow = self.FL.Trapezoid((0,0), (0,1), (0,1), (0.25,0))
-    self.NegMotorResponseMedLow = self.FL.Trapezoid((0,0), (0.25,1), (0.25,1), (0.5,0))
-    self.NegMotorResponseMed = self.FL.Trapezoid((0.25,0), (0.5,1), (0.5,1), (0.75,0))
-    self.NegMotorResponseMedHigh = self.FL.Trapezoid((0.5,0), (0.75,1), (0.75,1), (1,0))
-    self.NegMotorResponseHigh = self.FL.Trapezoid((0.75, 0), (1, 1), (1, 1), (1, 0))
+    self.NegMotorResponseLow = self.FL.Trapezoid((0,0), (0,1), (0,1), (-0.25,0))
+    self.NegMotorResponseMedLow = self.FL.Trapezoid((0,0), (-0.25,1), (-0.25,1), (-0.5,0))
+    self.NegMotorResponseMed = self.FL.Trapezoid((-0.25,0), (-0.5,1), (-0.5,1), (-0.75,0))
+    self.NegMotorResponseMedHigh = self.FL.Trapezoid((-0.5,0), (-0.75,1), (-0.75,1), (-1,0))
+    self.NegMotorResponseHigh = self.FL.Trapezoid((-0.75, 0), (-1, 1), (-1, 1), (-1, 0))
        
   def DrawBotToFile(self, FileName):
     import matplotlib.pyplot as plt
@@ -190,9 +216,23 @@ class BalanceBot():
     # Annotate with wind speed arrow
     ax.arrow(0.5, 0.9, self.WindSpeed / 2.0, 0, linewidth = 3, head_width = 0.05, head_length=0.05, ec = 'g', fc='g')
     ax.text(0.4, 0.95, 'Wind Speed: ' + str(self.WindSpeed)[:5], color='g')
-    plt.axis([-1, 1, 0, 1])
+    plt.axis([-5, 5, 0, 1])
     plt.savefig(self.OutputDir + FileName)
     ax.clear()
+    
+  def PlotQuantityHistories(self, Quantities=[]):    # Quantities is list of strings ['position','acceleration']
+    import matplotlib.pyplot as plt
+    ax = plt.axes()
+    if 'position' in Quantities:
+      plt.plot(self.TimeHistory, self.PositionHistory)
+      ax
+    if 'velocity' in Quantities:
+      plt.plot(self.TimeHistory, self.VelocityHistory)
+    if 'acceleration' in Quantities:
+      plt.plot(self.TimeHistory, self.AccelerationHistory)
+    if 'tilt'  in Quantities:
+      plt.plot(self.TimeHistory, self.TiltHistory)
+    plt.show()
     
   def UpdateFuzzySets(self):
     RelativeWind = self.WindSpeed - self.Velocity
@@ -286,7 +326,7 @@ class BalanceBot():
     # TiltErrorSmall and WindHigh --> MotorResponseMagnitudeMed
     NegOutputMedLowRules[0] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction([self.NegTiltErrorSmall.Membership, self.NegWindHigh.Membership], tNorm), 1, ImplicationMethod)
     
-    self.PosMotorResponseMedLow.Membership = self.FL.FuzzyDisjunction(PosOutputMedLowRules, sNorm)
+    self.NegMotorResponseMedLow.Membership = self.FL.FuzzyDisjunction(NegOutputMedLowRules, sNorm)
     
     # TiltErrorMed and WindLow --> MotorResponseMagnitudeMed
     NegOutputMedRules[0] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction([self.NegTiltErrorMed.Membership, self.NegWindLow.Membership], tNorm), 1, ImplicationMethod)
@@ -294,7 +334,7 @@ class BalanceBot():
     # TiltErrorMed and WindMed --> MotorResponseMagnitudeMed
     NegOutputMedRules[1] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction([self.NegTiltErrorMed.Membership, self.NegWindMed.Membership], tNorm), 1, ImplicationMethod)
     
-    self.PosMotorResponseMed.Membership = self.FL.FuzzyDisjunction(PosOutputMedRules, sNorm)
+    self.NegMotorResponseMed.Membership = self.FL.FuzzyDisjunction(NegOutputMedRules, sNorm)
     
     # TiltErrorMed and WindHigh --> MotorResponseMagnitudeMedHigh
     NegOutputMedHighRules[0] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction([self.NegTiltErrorMed.Membership, self.NegWindHigh.Membership], tNorm), 1, ImplicationMethod)
@@ -302,7 +342,7 @@ class BalanceBot():
     # TiltErrorLarge and WindLow --> MotorResponseMagnitudeMedHigh
     NegOutputMedHighRules[1] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction([self.NegTiltErrorLarge.Membership, self.NegWindLow.Membership], tNorm), 1, ImplicationMethod)
     
-    self.PosMotorResponseMedHigh.Membership = self.FL.FuzzyDisjunction(PosOutputMedHighRules, sNorm)
+    self.NegMotorResponseMedHigh.Membership = self.FL.FuzzyDisjunction(NegOutputMedHighRules, sNorm)
     
     # TiltErrorLarge and WindMed --> MotorResponseMagnitudeHigh
     NegOutputHighRules[0] = self.FL.FuzzyImplication(self.FL.FuzzyConjunction([self.NegTiltErrorLarge.Membership, self.NegWindMed.Membership], tNorm), 1, ImplicationMethod)
@@ -333,23 +373,35 @@ class BalanceBot():
       self.MotorForce = self.BotMaxForce * ((self.PosMotorResponseLow.Area * self.PosMotorResponseLow.COA) + (self.PosMotorResponseMedLow.Area * self.PosMotorResponseMedLow.COA) + (self.PosMotorResponseMed.Area * self.PosMotorResponseMed.COA) + (self.PosMotorResponseMedHigh.Area * self.PosMotorResponseMedHigh.COA) + (self.PosMotorResponseHigh.Area * self.PosMotorResponseHigh.COA)) / (TotalSetMass)
   
   def UpdateMechanicalState(self):
+    self.Time += self.dt
+    self.TimeHistory.append(self.Time)
+    
     RelativeWind = self.WindSpeed - self.Velocity
     
     self.Acceleration = self.MotorForce / self.BotMass
     self.Position += 0.5 * (self.Acceleration) * (self.dt ** 2)
     self.Velocity += self.Acceleration * self.dt
     
-    # Start with BalanceRod - experiences torques from gravity, bot acceleration, and wind 
-    GravitationalTorque = self.Gravity * self.RodMass * np.cos(self.Tilt * np.pi / 180.0) * (self.RodLength / 2.0)
+    self.AccelerationHistory.append(self.Acceleration)
+    self.PositionHistory.append(self.Position)
+    self.VelocityHistory.append(self.Velocity)
+    
+    # Start with BalanceRod - experiences torques from gravity, bot acceleration, and wind
+    GravitationalTorque = self.Gravity * self.RodMass * np.sin(self.Tilt * np.pi / 180.0) * (self.RodLength / 2.0)
     AccelerationTorque = self.Acceleration * self.RodMass * np.sin(self.Tilt * np.pi / 180.0) * (self.RodLength / 2.0)
     WindTorque = RelativeWind * self.RodLength * np.sin(self.Tilt * np.pi / 180.0) * self.RodDragCoefficient * (self.RodLength/2.0)
     RodTorque = GravitationalTorque + AccelerationTorque + WindTorque
+    print ("GravitationalTorque", "AccelerationTorque", "WindTorque", "TotalTorque")
+    print (GravitationalTorque, AccelerationTorque, WindTorque, RodTorque)
     
     #print(GravitationalTorque, AccelerationTorque)
     self.AngularAcceleration = RodTorque / self.RodMomentOfInertia
     self.Tilt += 0.5 * self.AngularAcceleration * (self.dt ** 2)
     self.AngularVelocity += self.AngularAcceleration * self.dt
     
+    self.AngularAccelerationHistory.append(self.AngularAcceleration)
+    self.TiltHistory.append(self.Tilt)
+    self.AngularVelocityHistory.append(self.AngularVelocity)
     
   def StartBalancing(self):
     self.UpdateMechanicalState()
@@ -358,7 +410,7 @@ class BalanceBot():
 
 
     
-Bot = BalanceBot(10, 10, 0.2, 1)
+Bot = BalanceBot(10, 50, 0.25, 1)
 #Bot.StartBalancing()
 #Bot.PosTiltErrorLarge.PrintMembershipFunction('.\\', 'Membership.png')
 
@@ -367,3 +419,4 @@ for RotTest in range(100):
   Bot.StartBalancing()
   Bot.DrawBotToFile('test' + str(RotTest) + '.png')
 
+Bot.PlotQuantityHistories(['position', 'velocity'])
