@@ -94,7 +94,7 @@ class FuzzyLogic():
       LeftSlopeDomain = np.linspace(self.LeftFoot[0], self.LeftShoulder[0], PointsPerSegment)
       LeftSlopeRange = np.linspace(0, 1, PointsPerSegment)
       PlateauDomain = np.linspace(self.LeftShoulder[0], self.RightShoulder[0], PointsPerSegment/2)
-      PlateauRange = np.linspace(1, 1, PointsPerSegment/2)
+      PlateauRange = np.ones(int(PointsPerSegment/2))
       RightSlopeDomain = np.linspace(self.RightShoulder[0], self.RightFoot[0], PointsPerSegment)
       RightSlopeRange = np.linspace(1, 0, PointsPerSegment)
       
@@ -221,7 +221,7 @@ class BalanceBot():
     self.PosWindMed = self.FL.Trapezoid((0,0), (0.5 * self.MaxWindSpeed,1), (0.5 * self.MaxWindSpeed,1), (1 * self.MaxWindSpeed,0))                   # Wind speed into direction of tilt; helping wind is always Low
     self.PosWindLow = self.FL.Trapezoid((0,0), (0,1), (0,1), (0.5 * self.MaxWindSpeed,0))                 
     
-    self.PosMotorResponseLow = self.FL.Trapezoid((0,0), (0,1), (0,1), (0.25*self.BotMaxForce,0))
+    self.PosMotorResponseLow = self.FL.Trapezoid((-0.25*self.BotMaxForce,0), (0,1), (0,1), (0.25*self.BotMaxForce,0))
     self.PosMotorResponseMedLow = self.FL.Trapezoid((0,0), (0.25*self.BotMaxForce,1), (0.25*self.BotMaxForce,1), (0.5*self.BotMaxForce,0))
     self.PosMotorResponseMed = self.FL.Trapezoid((0.25*self.BotMaxForce,0), (0.5*self.BotMaxForce,1), (0.5*self.BotMaxForce,1), (0.75*self.BotMaxForce,0))
     self.PosMotorResponseMedHigh = self.FL.Trapezoid((0.5*self.BotMaxForce,0), (0.75*self.BotMaxForce,1), (0.75*self.BotMaxForce,1), (1*self.BotMaxForce,0))
@@ -235,7 +235,7 @@ class BalanceBot():
     self.NegWindMed = self.FL.Trapezoid( (-1 * self.MaxWindSpeed,0), (-0.5 * self.MaxWindSpeed,1), (-0.5 * self.MaxWindSpeed,1), (0,0))      
     self.NegWindLow = self.FL.Trapezoid((-0.5 * self.MaxWindSpeed,0), (0, 1), (0,1), (0, 0))    
     
-    self.NegMotorResponseLow = self.FL.Trapezoid((-0.25*self.BotMaxForce,0), (0,1), (0,1), (0,0))
+    self.NegMotorResponseLow = self.FL.Trapezoid((-0.25*self.BotMaxForce,0), (0,1), (0,1), (0.25*self.BotMaxForce,0))
     self.NegMotorResponseMedLow = self.FL.Trapezoid((-0.5*self.BotMaxForce,0), (-0.25*self.BotMaxForce,1), (-0.25*self.BotMaxForce,1), (0,0))
     self.NegMotorResponseMed = self.FL.Trapezoid((-0.75*self.BotMaxForce,0), (-0.5*self.BotMaxForce,1), (-0.5*self.BotMaxForce,1), (-0.25*self.BotMaxForce,0))
     self.NegMotorResponseMedHigh = self.FL.Trapezoid((-1*self.BotMaxForce,0), (-0.75*self.BotMaxForce,1), (-0.75*self.BotMaxForce,1), (-0.5*self.BotMaxForce,0))
@@ -267,27 +267,27 @@ class BalanceBot():
       ax = plt.axes()
       # PosTiltErrorLarge
       ax = self.PosTiltErrorLarge.PrintMembershipFunctionToAxes('r', ax)
-      RedDotted = mlines.Line2D([], [], color='r', label='+TEL', lineStyle='-')
+      RedSolid = mlines.Line2D([], [], color='r', label='+TEL', lineStyle='-')
       
       # PosTiltErrorMed
       ax = self.PosTiltErrorMed.PrintMembershipFunctionToAxes('b', ax)
-      BlueDotted = mlines.Line2D([], [], color='b', label='+TEM', lineStyle='-')
+      BlueSolid = mlines.Line2D([], [], color='b', label='+TEM', lineStyle='-')
       
       # PosTiltErrorSmall
       ax = self.PosTiltErrorSmall.PrintMembershipFunctionToAxes('y', ax)
-      YellowDotted = mlines.Line2D([], [], color='y', label='+TES', lineStyle='-')
+      YellowSolid = mlines.Line2D([], [], color='y', label='+TES', lineStyle='-')
 
       # NegTiltErrorLarge
       ax = self.NegTiltErrorLarge.PrintMembershipFunctionToAxes('g', ax)
-      GreenDotted = mlines.Line2D([], [], color='g', label='-TEL', lineStyle='-')
+      GreenSolid = mlines.Line2D([], [], color='g', label='-TEL', lineStyle='-')
 
       # NegTiltErrorMed
       ax = self.NegTiltErrorMed.PrintMembershipFunctionToAxes('orange', ax)
-      OrangeDotted = mlines.Line2D([], [], color='orange', label='-TEM', lineStyle='-')
+      OrangeSolid = mlines.Line2D([], [], color='orange', label='-TEM', lineStyle='-')
 
       # NegTiltErrorSmall
       ax = self.NegTiltErrorSmall.PrintMembershipFunctionToAxes('purple', ax)
-      PurpleDotted = mlines.Line2D([], [], color='purple', label='-TES', lineStyle='-')
+      PurpleSolid = mlines.Line2D([], [], color='purple', label='-TES', lineStyle='-')
       
       plt.title('TiltError')
       ax.set_xlabel('Rod tilt error (deg)')
@@ -296,7 +296,7 @@ class BalanceBot():
       ax.plot(self.PosTiltErrorLarge.CrispValue*np.ones(PointsPerSegment), np.linspace(0,1,PointsPerSegment), '|', color='k', linewidth=32)
       ax.text(self.PosTiltErrorLarge.RightFoot[0]*0.75, 1.1, 'CV=' + str(self.PosTiltErrorLarge.CrispValue), size=16)
       
-      plt.legend(handles=[RedDotted, BlueDotted, YellowDotted, GreenDotted, OrangeDotted, PurpleDotted])
+      plt.legend(handles=[RedSolid, BlueSolid, YellowSolid, GreenSolid, OrangeSolid, PurpleSolid])
       plt.savefig(self.OutputDir + self.FunctionsSeq + self.TiltErrorSeq + OutputFiles[FuzzySets.index('TiltError')])
       ax.clear()
       
@@ -304,27 +304,27 @@ class BalanceBot():
       ax = plt.axes()
       # PosWindHigh
       ax = self.PosWindHigh.PrintMembershipFunctionToAxes('r', ax)
-      RedDotted = mlines.Line2D([], [], color='r', label='+WH', lineStyle='-')
+      RedSolid = mlines.Line2D([], [], color='r', label='+WH', lineStyle='-')
       
       # PosWindMed
       ax = self.PosWindMed.PrintMembershipFunctionToAxes('b', ax)
-      BlueDotted = mlines.Line2D([], [], color='b', label='+WM', lineStyle='-')
+      BlueSolid = mlines.Line2D([], [], color='b', label='+WM', lineStyle='-')
       
       # PosWindLow
       ax = self.PosWindLow.PrintMembershipFunctionToAxes('y', ax)
-      YellowDotted = mlines.Line2D([], [], color='y', label='+WL', lineStyle='-')
+      YellowSolid = mlines.Line2D([], [], color='y', label='+WL', lineStyle='-')
       
       # NegWindHigh
       ax = self.NegWindHigh.PrintMembershipFunctionToAxes('g', ax)
-      GreenDotted = mlines.Line2D([], [], color='g', label='-WH', lineStyle='-')    
+      GreenSolid = mlines.Line2D([], [], color='g', label='-WH', lineStyle='-')    
       
       # NegWindMed
       ax = self.NegWindMed.PrintMembershipFunctionToAxes('orange', ax)
-      OrangeDotted = mlines.Line2D([], [], color='orange', label='-WM', lineStyle='-')
+      OrangeSolid = mlines.Line2D([], [], color='orange', label='-WM', lineStyle='-')
       
       # NegWindLow
       ax = self.NegWindLow.PrintMembershipFunctionToAxes('purple', ax)
-      PurpleDotted = mlines.Line2D([], [], color='purple', label='-WL', lineStyle='-')
+      PurpleSolid = mlines.Line2D([], [], color='purple', label='-WL', lineStyle='-')
     
       plt.title('Wind')
       ax.set_xlabel('Wind speed')
@@ -333,7 +333,7 @@ class BalanceBot():
       ax.plot(self.PosWindHigh.CrispValue*np.ones(PointsPerSegment), np.linspace(0,1,PointsPerSegment), '|', color='k', linewidth=32)
       ax.text(self.PosWindHigh.RightFoot[0]*0.75, 1.1, 'CV=' + str(self.PosWindHigh.CrispValue), size=16)
       
-      plt.legend(handles=[RedDotted, BlueDotted, YellowDotted, GreenDotted, OrangeDotted, PurpleDotted])
+      plt.legend(handles=[RedSolid, BlueSolid, YellowSolid, GreenSolid, OrangeSolid, PurpleSolid])
       plt.savefig(self.OutputDir + self.FunctionsSeq + self.WindSeq + OutputFiles[FuzzySets.index('Wind')])
       ax.clear()
       
@@ -342,43 +342,43 @@ class BalanceBot():
       
       # PosMotorResponseHigh
       ax = self.PosMotorResponseHigh.PrintMembershipFunctionToAxes('r', ax)
-      RedDotted = mlines.Line2D([], [], color='r', label='+MRH', lineStyle='-')
+      RedSolid = mlines.Line2D([], [], color='r', label='+MRH', lineStyle='-')
       
       # PosMotorResponseMedHigh
       ax = self.PosMotorResponseMedHigh.PrintMembershipFunctionToAxes('b', ax)
-      BlueDotted = mlines.Line2D([], [], color='b', label='+MRmH', lineStyle='-')
+      BlueSolid = mlines.Line2D([], [], color='b', label='+MRmH', lineStyle='-')
 
       # PosMotorResponseMed
       ax = self.PosMotorResponseMed.PrintMembershipFunctionToAxes('y', ax)
-      YellowDotted = mlines.Line2D([], [], color='y', label='+MRM', lineStyle='-')
+      YellowSolid = mlines.Line2D([], [], color='y', label='+MRM', lineStyle='-')
 
       # PosMotorResponseMedLow
       ax = self.PosMotorResponseMedLow.PrintMembershipFunctionToAxes('c', ax)
-      CyanDotted = mlines.Line2D([], [], color='c', label='+MRmL', lineStyle='-')
+      CyanSolid = mlines.Line2D([], [], color='c', label='+MRmL', lineStyle='-')
 
       # PosMotorResponseLow
       ax = self.PosMotorResponseLow.PrintMembershipFunctionToAxes('m', ax)
-      MagentaDotted = mlines.Line2D([], [], color='m', label='+MRL', lineStyle='-')
+      MagentaSolid = mlines.Line2D([], [], color='m', label='+MRL', lineStyle='-')
       
       # NegMotorResponseHigh
       ax = self.NegMotorResponseHigh.PrintMembershipFunctionToAxes('g', ax)
-      GreenDotted = mlines.Line2D([], [], color='g', label='-MRH', lineStyle='-')
+      GreenSolid = mlines.Line2D([], [], color='g', label='-MRH', lineStyle='-')
       
       # NegMotorResponseMedHigh
       ax = self.NegMotorResponseMedHigh.PrintMembershipFunctionToAxes('orange', ax)
-      OrangeDotted = mlines.Line2D([], [], color='orange', label='-MRmH', lineStyle='-')
+      OrangeSolid = mlines.Line2D([], [], color='orange', label='-MRmH', lineStyle='-')
 
       # NegMotorResponseMed
       ax = self.NegMotorResponseMed.PrintMembershipFunctionToAxes('purple', ax)
-      PurpleDotted = mlines.Line2D([], [], color='purple', label='-MRM', lineStyle='-')
+      PurpleSolid = mlines.Line2D([], [], color='purple', label='-MRM', lineStyle='-')
 
       # NegMotorResponseMedLow
       ax = self.NegMotorResponseMedLow.PrintMembershipFunctionToAxes('pink', ax)
-      PinkDotted = mlines.Line2D([], [], color='pink', label='-MRmL', lineStyle='-')
+      PinkSolid = mlines.Line2D([], [], color='pink', label='-MRmL', lineStyle='-')
 
       # NegMotorResponseLow
       ax = self.NegMotorResponseLow.PrintMembershipFunctionToAxes('brown', ax)
-      BrownDotted = mlines.Line2D([], [], color='brown', label='-MRL', lineStyle='-')
+      BrownSolid = mlines.Line2D([], [], color='brown', label='-MRL', lineStyle='-')
       
       plt.title('MotorResponse')
       ax.set_xlabel('Motor force (N)')
@@ -387,22 +387,47 @@ class BalanceBot():
       ax.plot(self.MotorForce*np.ones(PointsPerSegment), np.linspace(0,1,PointsPerSegment), '|', color='k', linewidth=32)
       ax.text(self.PosMotorResponseHigh.RightFoot[0]*0.75, 1.1, 'CV=' + str(self.MotorForce), size=16)
       
-      plt.legend(handles=[RedDotted, BlueDotted, YellowDotted, CyanDotted, MagentaDotted, BrownDotted, PinkDotted, PurpleDotted, OrangeDotted, GreenDotted])
+      plt.legend(handles=[RedSolid, BlueSolid, YellowSolid, CyanSolid, MagentaSolid, BrownSolid, PinkSolid, PurpleSolid, OrangeSolid, GreenSolid])
       plt.savefig(self.OutputDir + self.FunctionsSeq + self.MotorResponseSeq + OutputFiles[FuzzySets.index('MotorResponse')])
       ax.clear()
       
-  def PlotQuantityHistories(self, Quantities=[]):    # Quantities is list of strings ['position','acceleration']
+  def PlotQuantityHistories(self, Quantities=[]):    # Quantities is list of strings ['Position','Acceleration']
     import matplotlib.pyplot as plt
-    ax = plt.axes()
-    if 'position' in Quantities:
-      plt.plot(self.TimeHistory, self.PositionHistory)
-      ax
-    if 'velocity' in Quantities:
-      plt.plot(self.TimeHistory, self.VelocityHistory)
-    if 'acceleration' in Quantities:
-      plt.plot(self.TimeHistory, self.AccelerationHistory)
-    if 'tilt'  in Quantities:
-      plt.plot(self.TimeHistory, self.TiltHistory)
+    import matplotlib.lines as mlines
+    fig = plt.figure()
+    
+    if 'Position' in Quantities:
+      ax1 = fig.add_subplot(411)
+      ax1.plot(self.TimeHistory, self.PositionHistory, 'r')
+      ax1.set_xlabel('Time (s)')
+      ax1.set_ylabel('Position (m)')
+    PositionLine = mlines.Line2D(self.PositionHistory, self.TimeHistory, color='r', label='Position', lineStyle='-')
+    
+    if 'Velocity' in Quantities:
+      ax2 = fig.add_subplot(412)
+      ax2.plot(self.TimeHistory, self.VelocityHistory, 'b')
+      ax2.set_xlabel('Time (s)')
+      ax2.set_ylabel('Velocity (m/s)')
+    VelocityLine = mlines.Line2D(self.VelocityHistory, self.TimeHistory, color='b', label='Velocity', lineStyle='-')
+    
+    if 'Acceleration' in Quantities:
+      ax3 = fig.add_subplot(413)
+      ax3.plot(self.TimeHistory, self.AccelerationHistory, 'orange')
+      ax3.set_xlabel('Time (s)')
+      ax3.set_ylabel('Acceleration (m/s2)')
+    AccelerationLine = mlines.Line2D(self.AccelerationHistory, self.TimeHistory, color='orange', label='Acceleration', lineStyle='-')
+    
+    if 'Tilt' in Quantities:
+      ax4 = fig.add_subplot(414)
+      ax4.plot(self.TimeHistory, self.TiltHistory, 'purple')
+      ax4.set_xlabel('Time (s)')
+      ax4.set_ylabel('Tilt (deg)')
+    TiltLine = mlines.Line2D(self.TiltHistory, self.TimeHistory, color='purple', label='Tilt', lineStyle='-')
+    
+    plt.legend(handles=[PositionLine, VelocityLine, AccelerationLine, TiltLine])
+    
+    #if 'Tilt'  in Quantities:
+      #plt.plot(self.TimeHistory, self.TiltHistory)
     plt.show()
     
   def UpdateFuzzySets(self):
@@ -421,17 +446,20 @@ class BalanceBot():
     self.PosWindLow.ComputeMembership(self.WindSpeed)
     
     # (Re)initialize MotorResponseRules
-    PosOutputLowRules = [0, 0]
+    PosOutputLowRules = [0, 0, 0]
     PosOutputMedLowRules = [0]
-    PosOutputMedRules = [0, 0,]
+    PosOutputMedRules = [0, 0, 0]
     PosOutputMedHighRules = [0, 0]
-    PosOutputHighRules = [0, 0]
+    PosOutputHighRules = [0, 0, 0]
+    
+    # TiltErrorSmall --> MotorResponseMagnitudeLow
+    PosOutputLowRules[0] = self.FL.ImplicationAntecedant2Consequent(self.PosTiltErrorSmall.Membership, 1, ImplicationMethod)
     
     # TiltErrorSmall and WindLow --> MotorResponseMagnitudeLow
-    PosOutputLowRules[0] = self.FL.ImplicationAntecedant2Consequent(self.FL.FuzzyConjunction([self.PosTiltErrorSmall.Membership, self.PosWindLow.Membership], tNorm), 1, ImplicationMethod)
+    PosOutputLowRules[1] = self.FL.ImplicationAntecedant2Consequent(self.FL.FuzzyConjunction([self.PosTiltErrorSmall.Membership, self.PosWindLow.Membership], tNorm), 1, ImplicationMethod)
     
     # TiltErrorSmall and WindMed --> MotorResponseMagnitudeLow
-    PosOutputLowRules[1] = self.FL.ImplicationAntecedant2Consequent(self.FL.FuzzyConjunction([self.PosTiltErrorSmall.Membership, self.PosWindMed.Membership], tNorm), 1, ImplicationMethod)
+    PosOutputLowRules[2] = self.FL.ImplicationAntecedant2Consequent(self.FL.FuzzyConjunction([self.PosTiltErrorSmall.Membership, self.PosWindMed.Membership], tNorm), 1, ImplicationMethod)
     
     self.PosMotorResponseLow.Membership = self.FL.FuzzyDisjunction(PosOutputLowRules, sNorm)
     
@@ -440,11 +468,14 @@ class BalanceBot():
     
     self.PosMotorResponseMedLow.Membership = self.FL.FuzzyDisjunction(PosOutputMedLowRules, sNorm)
     
+    # TiltErrorMed --> MotorResponseMagnitudeMed
+    PosOutputMedRules[0] = self.FL.ImplicationAntecedant2Consequent(self.PosTiltErrorMed.Membership, 1, ImplicationMethod)
+    
     # TiltErrorMed and WindLow --> MotorResponseMagnitudeMed
-    PosOutputMedRules[0] = self.FL.ImplicationAntecedant2Consequent(self.FL.FuzzyConjunction([self.PosTiltErrorMed.Membership, self.PosWindLow.Membership], tNorm), 1, ImplicationMethod)
+    PosOutputMedRules[1] = self.FL.ImplicationAntecedant2Consequent(self.FL.FuzzyConjunction([self.PosTiltErrorMed.Membership, self.PosWindLow.Membership], tNorm), 1, ImplicationMethod)
     
     # TiltErrorMed and WindMed --> MotorResponseMagnitudeMed
-    PosOutputMedRules[1] = self.FL.ImplicationAntecedant2Consequent(self.FL.FuzzyConjunction([self.PosTiltErrorMed.Membership, self.PosWindMed.Membership], tNorm), 1, ImplicationMethod)
+    PosOutputMedRules[2] = self.FL.ImplicationAntecedant2Consequent(self.FL.FuzzyConjunction([self.PosTiltErrorMed.Membership, self.PosWindMed.Membership], tNorm), 1, ImplicationMethod)
     
     self.PosMotorResponseMed.Membership = self.FL.FuzzyDisjunction(PosOutputMedRules, sNorm)
     
@@ -456,11 +487,14 @@ class BalanceBot():
     
     self.PosMotorResponseMedHigh.Membership = self.FL.FuzzyDisjunction(PosOutputMedHighRules, sNorm)
     
+    # TiltErrorLarge --> MotorResponseMagnitudeHigh
+    PosOutputHighRules[0] = self.FL.ImplicationAntecedant2Consequent(self.PosTiltErrorLarge.Membership, 1, ImplicationMethod)
+    
     # TiltErrorLarge and WindMed --> MotorResponseMagnitudeHigh
-    PosOutputHighRules[0] = self.FL.ImplicationAntecedant2Consequent(self.FL.FuzzyConjunction([self.PosTiltErrorLarge.Membership, self.PosWindMed.Membership], tNorm), 1, ImplicationMethod)
+    PosOutputHighRules[1] = self.FL.ImplicationAntecedant2Consequent(self.FL.FuzzyConjunction([self.PosTiltErrorLarge.Membership, self.PosWindMed.Membership], tNorm), 1, ImplicationMethod)
     
     # TiltErrorLarge and WindHigh --> MotorResponseMagnitudeHigh
-    PosOutputHighRules[1] = self.FL.ImplicationAntecedant2Consequent(self.FL.FuzzyConjunction([self.PosTiltErrorLarge.Membership, self.PosWindHigh.Membership], tNorm), 1, ImplicationMethod)
+    PosOutputHighRules[2] = self.FL.ImplicationAntecedant2Consequent(self.FL.FuzzyConjunction([self.PosTiltErrorLarge.Membership, self.PosWindHigh.Membership], tNorm), 1, ImplicationMethod)
     
     self.PosMotorResponseHigh.Membership = self.FL.FuzzyDisjunction(PosOutputHighRules, sNorm)
     
@@ -480,17 +514,20 @@ class BalanceBot():
     self.NegWindLow.ComputeMembership(self.WindSpeed)
     
     # (Re)initialize MotorResponseRules
-    NegOutputLowRules = [0, 0]
+    NegOutputLowRules = [0, 0, 0]
     NegOutputMedLowRules = [0]
-    NegOutputMedRules = [0, 0,]
+    NegOutputMedRules = [0, 0, 0]
     NegOutputMedHighRules = [0, 0]
-    NegOutputHighRules = [0, 0]
+    NegOutputHighRules = [0, 0, 0]
+    
+    # TiltErrorSmall --> MotorResponseMagnitudeLow
+    NegOutputLowRules[0] = self.FL.ImplicationAntecedant2Consequent(self.NegTiltErrorSmall.Membership, 1, ImplicationMethod)
     
     # TiltErrorSmall and WindLow --> MotorResponseMagnitudeLow
-    NegOutputLowRules[0] = self.FL.ImplicationAntecedant2Consequent(self.FL.FuzzyConjunction([self.NegTiltErrorSmall.Membership, self.NegWindLow.Membership], tNorm), 1, ImplicationMethod)
+    NegOutputLowRules[1] = self.FL.ImplicationAntecedant2Consequent(self.FL.FuzzyConjunction([self.NegTiltErrorSmall.Membership, self.NegWindLow.Membership], tNorm), 1, ImplicationMethod)
     
     # TiltErrorSmall and WindMed --> MotorResponseMagnitudeLow
-    NegOutputLowRules[1] = self.FL.ImplicationAntecedant2Consequent(self.FL.FuzzyConjunction([self.NegTiltErrorSmall.Membership, self.NegWindMed.Membership], tNorm), 1, ImplicationMethod)
+    NegOutputLowRules[2] = self.FL.ImplicationAntecedant2Consequent(self.FL.FuzzyConjunction([self.NegTiltErrorSmall.Membership, self.NegWindMed.Membership], tNorm), 1, ImplicationMethod)
     
     self.NegMotorResponseLow.Membership = self.FL.FuzzyDisjunction(NegOutputLowRules, sNorm)
     
@@ -499,11 +536,14 @@ class BalanceBot():
     
     self.NegMotorResponseMedLow.Membership = self.FL.FuzzyDisjunction(NegOutputMedLowRules, sNorm)
     
+    # TiltErrorMed --> MotorResponseMagnitudeMed
+    NegOutputMedRules[0] = self.FL.ImplicationAntecedant2Consequent(self.NegTiltErrorMed.Membership, 1, ImplicationMethod)
+    
     # TiltErrorMed and WindLow --> MotorResponseMagnitudeMed
-    NegOutputMedRules[0] = self.FL.ImplicationAntecedant2Consequent(self.FL.FuzzyConjunction([self.NegTiltErrorMed.Membership, self.NegWindLow.Membership], tNorm), 1, ImplicationMethod)
+    NegOutputMedRules[1] = self.FL.ImplicationAntecedant2Consequent(self.FL.FuzzyConjunction([self.NegTiltErrorMed.Membership, self.NegWindLow.Membership], tNorm), 1, ImplicationMethod)
     
     # TiltErrorMed and WindMed --> MotorResponseMagnitudeMed
-    NegOutputMedRules[1] = self.FL.ImplicationAntecedant2Consequent(self.FL.FuzzyConjunction([self.NegTiltErrorMed.Membership, self.NegWindMed.Membership], tNorm), 1, ImplicationMethod)
+    NegOutputMedRules[2] = self.FL.ImplicationAntecedant2Consequent(self.FL.FuzzyConjunction([self.NegTiltErrorMed.Membership, self.NegWindMed.Membership], tNorm), 1, ImplicationMethod)
     
     self.NegMotorResponseMed.Membership = self.FL.FuzzyDisjunction(NegOutputMedRules, sNorm)
     
@@ -515,11 +555,14 @@ class BalanceBot():
     
     self.NegMotorResponseMedHigh.Membership = self.FL.FuzzyDisjunction(NegOutputMedHighRules, sNorm)
     
+    # TiltErrorSmall --> MotorResponseMagnitudeHigh
+    NegOutputHighRules[0] = self.FL.ImplicationAntecedant2Consequent(self.NegTiltErrorLarge.Membership, 1, ImplicationMethod)
+    
     # TiltErrorLarge and WindMed --> MotorResponseMagnitudeHigh
-    NegOutputHighRules[0] = self.FL.ImplicationAntecedant2Consequent(self.FL.FuzzyConjunction([self.NegTiltErrorLarge.Membership, self.NegWindMed.Membership], tNorm), 1, ImplicationMethod)
+    NegOutputHighRules[1] = self.FL.ImplicationAntecedant2Consequent(self.FL.FuzzyConjunction([self.NegTiltErrorLarge.Membership, self.NegWindMed.Membership], tNorm), 1, ImplicationMethod)
     
     # TiltErrorLarge and WindHigh --> MotorResponseMagnitudeHigh
-    NegOutputHighRules[1] = self.FL.ImplicationAntecedant2Consequent(self.FL.FuzzyConjunction([self.NegTiltErrorLarge.Membership, self.NegWindHigh.Membership], tNorm), 1, ImplicationMethod)
+    NegOutputHighRules[2] = self.FL.ImplicationAntecedant2Consequent(self.FL.FuzzyConjunction([self.NegTiltErrorLarge.Membership, self.NegWindHigh.Membership], tNorm), 1, ImplicationMethod)
     
     self.NegMotorResponseHigh.Membership = self.FL.FuzzyDisjunction(NegOutputHighRules, sNorm)
     
@@ -559,7 +602,7 @@ class BalanceBot():
     
     # Start with BalanceRod - experiences torques from gravity, bot acceleration, and wind
     GravitationalTorque = self.Gravity * self.RodMass * np.sin(self.Tilt * np.pi / 180.0) * (self.RodLength / 2.0)
-    AccelerationTorque = self.Acceleration * self.RodMass * np.sin(self.Tilt * np.pi / 180.0) * (self.RodLength / 2.0)
+    AccelerationTorque = -1*self.Acceleration * self.RodMass * np.sin(self.Tilt * np.pi / 180.0) * (self.RodLength / 2.0)
     WindTorque = self.WindSpeed * self.RodLength * np.sin(self.Tilt * np.pi / 180.0) * self.RodDragCoefficient * (self.RodLength/2.0)
     RodTorque = GravitationalTorque + AccelerationTorque + WindTorque
     print ("GravitationalTorque", "AccelerationTorque", "WindTorque", "TotalTorque")
@@ -579,13 +622,13 @@ class BalanceBot():
     self.UpdateFuzzySets()
     self.UpdateControls()
     
-Bot = BalanceBot(10, 50, 0.25, 1, 10)
+Bot = BalanceBot(10, 100, 0.25, 10, 10)
 #Bot.StartBalancing()
 #Bot.PosTiltErrorLarge.PrintMembershipFunction('.\\', 'Membership.png')
 
 
-for TestIt in range(10):
+for TestIt in range(100):
   Bot.StartBalancing()
-  Bot.DrawBotToFile('arena' + str(TestIt) + '.png')
-  Bot.PlotFuzzySetsToFile(['TiltError' + str(TestIt) + '.png', 'RelativeWind' + str(TestIt) + '.png', 'MotorResponse' + str(TestIt) + '.png'], ['TiltError', 'Wind', 'MotorResponse'])
-#Bot.PlotQuantityHistories(['position', 'velocity'])
+  #Bot.DrawBotToFile('arena' + str(TestIt) + '.png')
+  #Bot.PlotFuzzySetsToFile(['TiltError' + str(TestIt) + '.png', 'RelativeWind' + str(TestIt) + '.png', 'MotorResponse' + str(TestIt) + '.png'], ['TiltError', 'Wind', 'MotorResponse'])
+Bot.PlotQuantityHistories(['Position', 'Velocity', 'Acceleration', 'Tilt'])
