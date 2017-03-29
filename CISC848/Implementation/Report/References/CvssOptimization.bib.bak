@@ -1,0 +1,53 @@
+% Encoding: UTF-8
+
+@Article{Allodi2014,
+  author =  {L Allodi and F Massacci},
+  title =   {Comparing Vulnerability Severity and Exploits Using Case-Control Studies},
+  journal = {ACM Transactions on Information and Systems Security},
+  year =    {2014},
+  volume =  {17},
+  number =  {1},
+  file =    {:Allodi2014.pdf:PDF}
+}
+
+@Article{Khazaei2016,
+  author =  {A Khazaei, M Ghasemzadeh, and V Derhami},
+  title =   {An automatic method for CVSS score prediction using vulnerabilities description},
+  journal = {Journal of Intelligent \& Fuzzy Systems},
+  year =    {2016},
+  volume =  {30},
+  pages =   {89-96},
+  file =    {:Khazaei2016.pdf:PDF}
+}
+
+@Article{Miller2007,
+  author =  {C Miller},
+  title =   {The Legitimate Vulnerability Market},
+  journal = {Independent Security Evaluators publication},
+  year =    {2007},
+  file =    {:Miller2007.pdf:PDF}
+}
+
+@Article{Scarfone2009,
+  author =  {K Scarfone and P Mell},
+  title =   {An Analysis of CVSS Version 2 Vulnerability Scoring},
+  journal = {Third International Symposium on Empirical Software Engineering and Measurement},
+  year =    {2009},
+  file =    {:Scarfone2009.pdf:PDF}
+}
+
+@Article{Younis2015,
+  author =  {AA Younis and YK Malaiya},
+  title =   {Comparing and Evaluating CVSS Base Metrics and Microsoft Rating System},
+  journal = {IEEE International Conference on Software Quality, Reliability, and Security},
+  year =    {2015},
+  file =    {:Younis2015.pdf:PDF}
+}
+
+@Article{Younis2016,
+  author =  {A Younis, YK Malaiya, and I Ray},
+  title =   {Evaluating CVSS Base Score Using Vulnerability Rewards Program},
+  journal = {International Federation for Information Processing},
+  year =    {2016},
+  file =    {:Younis2016.pdf:PDF}
+}

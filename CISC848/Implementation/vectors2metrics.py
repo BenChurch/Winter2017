@@ -3,7 +3,7 @@ import numpy as np
 from scipy.optimize import minimize
 
 # Base score threshold for positive exploit prediction
-PredictionThreshold = 8
+PredictionThreshold = 7.5
 
 VulnDir = './/Data//'
 UnexploitedCsvFile = 'UnexploitedIdsVectors.csv'
@@ -18,6 +18,22 @@ OutputDir = './/'
 OutputFile = 'Metrics.csv'
 
 OriginalParameters = [0.395, 0.646, 1.0, 0.35, 0.61, 0.71, 0.45, 0.56, 0.704, 0, 0.275, 0.66, 0, 0.275, 0.66, 0, 0.275, 0.66]
+
+def ReadInData():
+  # Read in Ids and vectors
+  Unexploited = []
+  with open(VulnDir + UnexploitedCsvFile, 'r', encoding='ascii', errors="surrogateescape") as file:
+    EntryReader = csv.reader(file)
+    for line in EntryReader:
+      Unexploited.append((line[0], line[1]))  # (ID, Vector)
+         
+  Exploited = []
+  with open(VulnDir + ExploitedCsvFile, 'r', encoding='ascii', errors="surrogateescape") as file:
+    EntryReader = csv.reader(file)
+    for line in EntryReader:
+      Exploited.append((line[0], line[1]))  # (ID, Vector)
+
+  return (Unexploited, Exploited)
 
 def Vector2BaseScore(Vector, Params): 
   # Expecting a 6 element array of chars indicating base score metric values
@@ -66,40 +82,6 @@ def Vector2BaseScore(Vector, Params):
   
   return BaseScore
   
-# Read in Ids and vectors
-Unexploited = []
-with open(VulnDir + UnexploitedCsvFile, 'r', encoding='ascii', errors="surrogateescape") as file:
-  EntryReader = csv.reader(file)
-  for line in EntryReader:
-    Unexploited.append((line[0], line[1]))  # (ID, Vector)
-       
-Exploited = []
-with open(VulnDir + ExploitedCsvFile, 'r', encoding='ascii', errors="surrogateescape") as file:
-  EntryReader = csv.reader(file)
-  for line in EntryReader:
-    Exploited.append((line[0], line[1]))  # (ID, Vector)
-   
-
-# Read in parameters
-Params = []
-with open(ParamsDir + ParamsFile, 'r', encoding='ascii', errors="surrogateescape") as file:
-  ParamReader = csv.reader(file)
-  LineNum = 0
-  for line in ParamReader:
-    if LineNum in RowRange:
-      Params.append([])
-      #print(line[1])
-      ParamStart = 2
-      ParamStop = 2
-      for i, char in enumerate(line[1]):
-        if char == ',' or char == ']' or char == '\n':
-          ParamStop = i
-          Params[-1].append(float(line[1][ParamStart:ParamStop]))
-          ParamStart = ParamStop + 1
-    LineNum += 1
-#print(Params)
-  
-
 def ComputeICC(Params, Unexpl, Expl):
   UnexploitedScores = []
   SumScores = 0
@@ -219,10 +201,25 @@ def ComputePrecision(ConfusionMatrix):
   FPs = float(ConfusionMatrix[1][0])
   return (TPs / (TPs + FPs))
   
-# Main program - compute and capture confusion matrix, metrics
-with open(OutputDir + OutputFile, 'w', newline = '') as file:
-  OutputWriter = csv.writer(file)
-  OutputWriter.writerow(['ParamSet #','Params','Confusion matrix', 'Sensitiviy', 'Prescision'])
-  for i, ParamSet in enumerate(Params):
-    ConMat = PredictExploits(Unexploited, Exploited, ParamSet, PredictionThreshold)
-    OutputWriter.writerow([i+1, ParamSet, ConMat, ComputeSensitivity(ConMat), ComputePrecision(ConMat)])
+# Overprediction and Underprediction errors provide better resolution for optimization objective function than binary classification based Sensitivity and Precision
+def ComputeMeanOverpredictionError(Unexploited, Params, Threshold):
+  SumOverpredictionError = 0
+  for Vuln in Unexploited:
+    Score = Vector2BaseScore(Vuln[1], Params)
+    if Score > 10.0:
+      return 10.0 - Threshold
+    if Score > Threshold:
+      SumOverpredictionError += Score - Threshold
+    # else: OverpredictionError = 0
+  MeanOverpredictionError = SumOverpredictionError / len(Unexploited)
+  return MeanOverpredictionError
+  
+def ComputeMeanUnderpredictionError(Exploited, Params, Threshold):
+  SumUnderpredictionError = 0
+  for Vuln in Exploited:
+    Score = Vector2BaseScore(Vuln[1], Params)
+    if Score < Threshold:
+      SumUnderpredictionError += Threshold - Score
+    #else: Underprediction = 0
+  MeanUnderpredictionError = SumUnderpredictionError / len(Exploited)
+  return MeanUnderpredictionError
