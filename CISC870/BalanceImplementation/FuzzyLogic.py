@@ -142,7 +142,7 @@ class FuzzyLogic():
       if AntecedantMembership == 0:
         return 0.00001    # Cannot (all) be 0
       else:
-        # As true as we must make whichever motor output, given the antecedant
+        # As true as we must make whichever motor output, given the antecedant - assumes ImplicationTruth = 1
         return AntecedantMembership
     else:
       print("Error - Unknown FuzzyImplication method")

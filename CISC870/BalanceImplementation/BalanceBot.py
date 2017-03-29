@@ -15,7 +15,7 @@ class BalanceBot():
     
     self.Gravity = 9.81
     self.Time = 0       # Start time, may be used to plot robot responses
-    self.dt = 0.25      # Time increment (sec)
+    self.dt = 0.005      # Time increment (sec)
     self.RodDragCoefficient = 10    # Force (per rod length - wind speed) in N
     self.MaxWindSpeed = MWS
     
@@ -432,15 +432,16 @@ class BalanceBot():
     
     #RelativeWind = self.WindSpeed - self.Velocity
     
+    # Linear, robot body kinematics and dynamics
     self.Acceleration = self.MotorForce / self.BotMass
-    self.Position += 0.5 * (self.Acceleration) * (self.dt ** 2)
+    self.Position += (self.Velocity * self.dt) + (0.5 * (self.Acceleration) * (self.dt ** 2))
     self.Velocity += self.Acceleration * self.dt
     
     self.AccelerationHistory.append(self.Acceleration)
     self.PositionHistory.append(self.Position)
     self.VelocityHistory.append(self.Velocity)
     
-    # Start with BalanceRod - experiences torques from gravity, bot acceleration, and wind
+    # Angular, rod kinematics and dynamics
     GravitationalTorque = self.Gravity * self.RodMass * np.sin(self.Tilt * np.pi / 180.0) * (self.RodLength / 2.0)
     AccelerationTorque = -1*self.Acceleration * self.RodMass * np.sin(self.Tilt * np.pi / 180.0) * (self.RodLength / 2.0)
     WindTorque = self.WindSpeed * self.RodLength * np.sin(self.Tilt * np.pi / 180.0) * self.RodDragCoefficient * (self.RodLength/2.0)
@@ -450,7 +451,7 @@ class BalanceBot():
     
     #print(GravitationalTorque, AccelerationTorque)
     self.AngularAcceleration = RodTorque / self.RodMomentOfInertia
-    self.Tilt += 0.5 * self.AngularAcceleration * (self.dt ** 2)
+    self.Tilt = (self.Tilt + (self.AngularVelocity * self.dt) + (0.5 * self.AngularAcceleration * (self.dt ** 2))) # % 360
     self.AngularVelocity += self.AngularAcceleration * self.dt
     
     self.AngularAccelerationHistory.append(self.AngularAcceleration)
