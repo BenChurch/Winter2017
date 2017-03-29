@@ -257,7 +257,7 @@ class BalanceBot():
       ax3 = fig.add_subplot(413)
       ax3.plot(self.TimeHistory, self.AccelerationHistory, 'orange')
       ax3.set_xlabel('Time (s)')
-      ax3.set_ylabel('Acceleration (m/s2)')
+      ax3.set_ylabel('Acceleration (m/s^2)')
     AccelerationLine = mlines.Line2D(self.AccelerationHistory, self.TimeHistory, color='orange', label='Acceleration', lineStyle='-')
     
     if 'Tilt' in Quantities:

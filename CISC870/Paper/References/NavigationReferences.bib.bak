@@ -1,5 +1,13 @@
 % Encoding: UTF-8
 
+@Article{AlYahmedi2011,
+  author =  {AS Al Yahmedi and MA Fatmi},
+  title =   {Fuzzy Logic Based Navigation of Mobile Robots},
+  journal = {Recent Advances in Mobile Robotics},
+  year =    {2011},
+  file =    {:Yahmedi2011.pdf:PDF}
+}
+
 @Article{Arkin1987,
   author =  {RC Arkin},
   title =   {Motor Schema Based Navigation for a Mobile Robot},
@@ -139,14 +147,6 @@
   number =  {6},
   pages =   {971-978},
   file =    {:Yen1995.pdf:PDF}
-}
-
-@Article{,
-  author =  {AS Al Yahmedi and MA Fatmi},
-  title =   {Fuzzy Logic Based Navigation of Mobile Robots},
-  journal = {Recent Advances in Mobile Robotics},
-  year =    {2011},
-  file =    {:Yahmedi2011.pdf:PDF}
 }
 
 @comment{jabref-meta: groupsversion:3;}
