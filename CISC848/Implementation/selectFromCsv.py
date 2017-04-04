@@ -1,10 +1,12 @@
-import csv, numpy
 # Randomly selects user-set number of rows from csv file
+
+import csv, numpy
+
 DataDir = 'Data/CVE/'
 SelectFromFile = 'someitems.csv'
 OutputFile = 'randomitems.csv'
 
-NumSelections = 5000
+NumSelections = 10000
 
 # Read all rows from file
 AllRows = []
