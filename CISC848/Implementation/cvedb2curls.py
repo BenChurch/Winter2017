@@ -9,7 +9,8 @@ curlBatAll = 'GetAllSites.bat'
 idscsv = 'ExploitedIDs.csv'
 allData = 'AllDB.csv'
 
-nvdURLbase = 'https://web.nvd.nist.gov/view/vuln/detail?vulnId='
+# nvdURLbase = 'https://web.nvd.nist.gov/view/vuln/detail?vulnId='
+nvdURLbase = 'https://nvd.nist.gov/vuln/detail/'
 
 ExploitedIDs = []
 AllIDs = []

@@ -3,7 +3,7 @@ import numpy as np
 from scipy.optimize import minimize
 
 # Base score threshold for positive exploit prediction
-PredictionThreshold = 7.5
+#PredictionThreshold = 7.5
 
 VulnDir = './/Data//'
 UnexploitedCsvFile = 'UnexploitedIdsVectors.csv'
@@ -14,8 +14,10 @@ ParamsFile = 'optimizationResults.csv'
 RowRange = range(1, 3) # Allow some kind of hyper-parameter search
 NumParams = 18  # How many parameters to read from each row
 
+"""
 OutputDir = './/'
 OutputFile = 'Metrics.csv'
+"""
 
 OriginalParameters = [0.395, 0.646, 1.0, 0.35, 0.61, 0.71, 0.45, 0.56, 0.704, 0, 0.275, 0.66, 0, 0.275, 0.66, 0, 0.275, 0.66]
 
@@ -36,11 +38,7 @@ def ReadInData():
   return (Unexploited, Exploited)
 
 def Vector2BaseScore(Vector, Params): 
-  # Expecting a 6 element array of chars indicating base score metric values
   # Expecting 6 3D arrays in ParamSets = [avParams, acParams, auParams, confParams, integParams = [1,2,3], availParams]
-  # Explicitly list hard-coded equation parameters
-  
-  HardParams = [0.6, 0.4, 1.5, 10.41, 20, 0, 1.176]
   
   # Some vectors are of a different form entirely, useless for this method, return MAGIC 5 for now
   if Vector[0] == "V":  
@@ -125,15 +123,15 @@ def ComputeICC(Params, Unexpl, Expl):
   MSSextraExpl = SSextraExpl / (len(Expl) - 1)
   
   #ICCs = ((MSSextraExpl / (MSSextraExpl + MSSintraExpl)), (MSSextraUnexpl / (MSSextraUnexpl + MSSintraUnexpl)))
-  # Try just the exploited ICC first
+
   ICCexpl = MSSextraExpl / (MSSextraExpl + MSSintraExpl)
   ICCUnexpl = MSSextraUnexpl / (MSSextraUnexpl + MSSintraUnexpl)
+  # CompICC = (ICCexpl + ICCUnexpl) /2.0
+  
   CompICC = ((ICCexpl * 2) + (ICCUnexpl * 1)) / 3.0
   
-  #CompICC = ((ICCUnexpl * len(Expl)) + (ICCexpl * len(Unexpl))) / (len(Unexpl) + len(Expl))
-  #print("Params: ", Params)
-  #print("CompICC: ", CompICC)
-  #print("")
+  # CompICC = ((ICCUnexpl * len(Expl)) + (ICCexpl * len(Unexpl))) / (len(Unexpl) + len(Expl))
+
   return CompICC
   
 def PredictExploits(Unexploited, Exploited, Params, Threshold):       # Combines all vuln vectors and computes their base score using Params. Scores > Threshold mean positive prediction
@@ -171,10 +169,6 @@ def PredictExploits(Unexploited, Exploited, Params, Threshold):       # Combines
   
   # ASSERT that max score is now 10
   
-  #print(ExplScores)
-  #print('')
-  #print(UnexplScores)
-  
   TN = 0
   FP = 0
   for VulnScore in UnexplScores:
@@ -206,8 +200,6 @@ def ComputeMeanOverpredictionError(Unexploited, Params, Threshold):
   SumOverpredictionError = 0
   for Vuln in Unexploited:
     Score = Vector2BaseScore(Vuln[1], Params)
-    if Score > 10.0:
-      return 10.0 - Threshold
     if Score > Threshold:
       SumOverpredictionError += Score - Threshold
     # else: OverpredictionError = 0

@@ -48,13 +48,15 @@ def WriteOutData(Unexpl, Expl, OptParamsStr, Threshold):
   with open(OutputDir + OutputFile, 'w', newline='') as file:
     outputWriter = csv.writer(file)
     outputWriter.writerow(['Parameter Set', 'ConfusionMatrix', 'Sensitivity', 'Precision', 'ICC', 'Parameters'])
-    outputWriter.writerow(['Original', OriginalConfusionMatrix, v2m.ComputeSensitivity(OriginalConfusionMatrix), v2m.ComputePrecision(OriginalConfusionMatrix), OriginalICC, SearchSpaceStart])
-    outputWriter.writerow(['Optimized', OptConfusionMatrix, v2m.ComputeSensitivity(OptConfusionMatrix), v2m.ComputePrecision(OptConfusionMatrix), OptICC, OptParamsArray])
+    outputWriter.writerow(['Original', OriginalConfusionMatrix, v2m.ComputeSensitivity(OriginalConfusionMatrix), v2m.ComputePrecision(OriginalConfusionMatrix), OriginalICC] + SearchSpaceStart)
+    outputWriter.writerow(['Optimized', OptConfusionMatrix, v2m.ComputeSensitivity(OptConfusionMatrix), v2m.ComputePrecision(OptConfusionMatrix), OptICC] + OptParamsArray)
 
 def OptObjFun(Params, Unexpl, Expl, Threshold):
   
   Beta = 3.0
   ConfusionMatrix = v2m.PredictExploits(Unexpl, Expl, Params, Threshold)
+  
+  CompICC = v2m.ComputeICC(Params, Unexpl, Expl)
   
   MeanOverpredictionError = v2m.ComputeMeanOverpredictionError(Unexpl, Params, Threshold)
   UnitOverpredictionError = MeanOverpredictionError / (10.0 - Threshold)
@@ -67,7 +69,9 @@ def OptObjFun(Params, Unexpl, Expl, Threshold):
   F2 = (1.0 - Sensitivity) * (1.0 - UnitUnderpredictionError)
   Fmeasure = (F1 + F2) / 2.0
   #Fmeasure = ((1.0 + (Beta**2)) * MeanOverpredictionError * MeanUnderpredictionError) / (((Beta**2) * MeanOverpredictionError) + (MeanUnderpredictionError))
-  print(F1, F2) #, Params)
+  
+  Fmeasure = 1 - CompICC
+  print("Optimization objective function value: " + str(Fmeasure))
   return (Fmeasure)
   
 (Unexploited, Exploited) = ReadInData()
