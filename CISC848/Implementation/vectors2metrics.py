@@ -124,21 +124,15 @@ def ComputeICC(Params, Unexpl, Expl):
   
   #ICCs = ((MSSextraExpl / (MSSextraExpl + MSSintraExpl)), (MSSextraUnexpl / (MSSextraUnexpl + MSSintraUnexpl)))
 
-  ICCexpl = MSSextraExpl / (MSSextraExpl + MSSintraExpl)
+  ICCExpl = MSSextraExpl / (MSSextraExpl + MSSintraExpl)
   ICCUnexpl = MSSextraUnexpl / (MSSextraUnexpl + MSSintraUnexpl)
-  # CompICC = (ICCexpl + ICCUnexpl) /2.0
-  
-  CompICC = ((ICCexpl * 2) + (ICCUnexpl * 1)) / 3.0
-  
-  # CompICC = ((ICCUnexpl * len(Expl)) + (ICCexpl * len(Unexpl))) / (len(Unexpl) + len(Expl))
-
-  return CompICC
+  return (ICCUnexpl, ICCExpl)
   
 def PredictExploits(Unexploited, Exploited, Params, Threshold):       # Combines all vuln vectors and computes their base score using Params. Scores > Threshold mean positive prediction
-  # Returns confusion matrix [[TP, TN], [FP, FN]]
+  # Returns confusion matrix [[TP, FP], [FN, TN]]
   
   # First, compute all scores since they must be renormalized
-  MaxScore = 0
+  MaxScore = 10
   MinScore = 10
   UnexplScores = []
   for Vuln in Unexploited:
@@ -183,23 +177,38 @@ def PredictExploits(Unexploited, Exploited, Params, Threshold):       # Combines
     if VulnScore >= Threshold: TP += 1
     else: FN += 1
     
-  return [[TP, FN], [FP, TN]]
+  return [[TP, FP], [FN, TN]]
   
 def ComputeSensitivity(ConfusionMatrix):
   TPs = float(ConfusionMatrix[0][0])
-  FNs = float(ConfusionMatrix[0][1])
+  FNs = float(ConfusionMatrix[1][0])
   return (TPs / (TPs + FNs))
 
 def ComputePrecision(ConfusionMatrix):
   TPs = float(ConfusionMatrix[0][0])
-  FPs = float(ConfusionMatrix[1][0])
-  return (TPs / (TPs + FPs))
+  FPs = float(ConfusionMatrix[0][1])
+  if TPs + FPs == 0: 
+    return 0
+  else:
+    return (TPs / (TPs + FPs))
   
 # Overprediction and Underprediction errors provide better resolution for optimization objective function than binary classification based Sensitivity and Precision
 def ComputeMeanOverpredictionError(Unexploited, Params, Threshold):
-  SumOverpredictionError = 0
+  # First, normalize scores to all be less than 10
+  MaxScore = 10
+  UnnormalizedScores = []
   for Vuln in Unexploited:
     Score = Vector2BaseScore(Vuln[1], Params)
+    UnnormalizedScores.append(Score)
+    if MaxScore < Score:
+      MaxScore = Score
+  
+  NormalizedScores = []
+  for UnnormalizedScore in UnnormalizedScores:
+    NormalizedScores.append((UnnormalizedScore / MaxScore) * 10.0)
+  
+  SumOverpredictionError = 0
+  for Score in NormalizedScores:
     if Score > Threshold:
       SumOverpredictionError += Score - Threshold
     # else: OverpredictionError = 0

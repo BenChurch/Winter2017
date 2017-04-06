@@ -47,16 +47,17 @@ def WriteOutData(Unexpl, Expl, OptParamsStr, Threshold):
     
   with open(OutputDir + OutputFile, 'w', newline='') as file:
     outputWriter = csv.writer(file)
-    outputWriter.writerow(['Parameter Set', 'ConfusionMatrix', 'Sensitivity', 'Precision', 'ICC', 'Parameters'])
-    outputWriter.writerow(['Original', OriginalConfusionMatrix, v2m.ComputeSensitivity(OriginalConfusionMatrix), v2m.ComputePrecision(OriginalConfusionMatrix), OriginalICC] + SearchSpaceStart)
-    outputWriter.writerow(['Optimized', OptConfusionMatrix, v2m.ComputeSensitivity(OptConfusionMatrix), v2m.ComputePrecision(OptConfusionMatrix), OptICC] + OptParamsArray)
+    outputWriter.writerow(['Parameter Set', 'ConfusionMatrix', 'Sensitivity', 'Precision', 'Unexpl ICC', 'Expl ICC', 'Parameters'])
+    outputWriter.writerow(['Original', OriginalConfusionMatrix, v2m.ComputeSensitivity(OriginalConfusionMatrix), v2m.ComputePrecision(OriginalConfusionMatrix), OriginalICCs[0], OriginalICCs[1]] + SearchSpaceStart)
+    outputWriter.writerow(['Optimized', OptConfusionMatrix, v2m.ComputeSensitivity(OptConfusionMatrix), v2m.ComputePrecision(OptConfusionMatrix), OptICCs[0], OptICCs[1]] + OptParamsArray)
 
 def OptObjFun(Params, Unexpl, Expl, Threshold):
   
   Beta = 3.0
   ConfusionMatrix = v2m.PredictExploits(Unexpl, Expl, Params, Threshold)
   
-  CompICC = v2m.ComputeICC(Params, Unexpl, Expl)
+  ICCs = v2m.ComputeICC(Params, Unexpl, Expl)
+  CompICC = (ICCs[0] + ICCs[1]*3) / 4.0
   
   MeanOverpredictionError = v2m.ComputeMeanOverpredictionError(Unexpl, Params, Threshold)
   UnitOverpredictionError = MeanOverpredictionError / (10.0 - Threshold)
@@ -65,19 +66,17 @@ def OptObjFun(Params, Unexpl, Expl, Threshold):
   
   Sensitivity = v2m.ComputeSensitivity(ConfusionMatrix)
   Precision = v2m.ComputePrecision(ConfusionMatrix)
-  F1 = (1.0 - Precision) * (1.0 - UnitOverpredictionError)
-  F2 = (1.0 - Sensitivity) * (1.0 - UnitUnderpredictionError)
-  Fmeasure = (F1 + F2) / 2.0
-  #Fmeasure = ((1.0 + (Beta**2)) * MeanOverpredictionError * MeanUnderpredictionError) / (((Beta**2) * MeanOverpredictionError) + (MeanUnderpredictionError))
-  
-  Fmeasure = 1 - CompICC
+  F1 = ((1.0 - Precision) + (UnitOverpredictionError)) / 2.0
+  F2 = ((1.0 - Sensitivity) + (UnitUnderpredictionError)) / 2.0
+  Fmeasure = (F1 + F2*3) / 4.0
+  #Fmeasure = 1 - CompICC
   print("Optimization objective function value: " + str(Fmeasure))
   return (Fmeasure)
   
 (Unexploited, Exploited) = ReadInData()
 
 
-OriginalICC = v2m.ComputeICC(SearchSpaceStart, Unexploited, Exploited)
+OriginalICCs = v2m.ComputeICC(SearchSpaceStart, Unexploited, Exploited)
 
 Bounds = []
 for Param in enumerate(SearchSpaceStart):
@@ -85,7 +84,7 @@ for Param in enumerate(SearchSpaceStart):
   
 result = (minimize(OptObjFun, SearchSpaceStart, (Unexploited, Exploited, ClassificationThreshold), 'SLSQP', None, None, None, Bounds))
 OptParams = result.x
-OptICC = v2m.ComputeICC(OptParams, Unexploited, Exploited)
+OptICCs = v2m.ComputeICC(OptParams, Unexploited, Exploited)
 
 OptParamsStr = str(OptParams)
 
