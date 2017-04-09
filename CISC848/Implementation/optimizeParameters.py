@@ -10,7 +10,7 @@ ExploitedCsvFile = 'ExploitedIdsVectors.csv'
 OutputDir = './/'
 OutputFile = 'optimizationResults.csv'
 
-ClassificationThreshold = 7.5
+ClassificationThreshold = 7
     
 SearchSpaceStart = [0.395, 0.646, 1.0, 0.35, 0.61, 0.71, 0.45, 0.56, 0.704, 0, 0.275, 0.66, 0, 0.275, 0.66, 0, 0.275, 0.66]
   
@@ -32,6 +32,7 @@ def ReadInData():
 
 def WriteOutData(Unexpl, Expl, OptParamsStr, Threshold):
   OriginalConfusionMatrix = v2m.PredictExploits(Unexpl, Expl, SearchSpaceStart, Threshold)
+  OriginalRiskReduction = (OriginalConfusionMatrix[0][0] / (OriginalConfusionMatrix[0][0] + OriginalConfusionMatrix[0][1])) - (OriginalConfusionMatrix[1][0] / (OriginalConfusionMatrix[1][0] + OriginalConfusionMatrix[1][1]))
   
   OptParamsArray = []
   ParamStart = 0
@@ -44,12 +45,13 @@ def WriteOutData(Unexpl, Expl, OptParamsStr, Threshold):
       else: ParamStop = OptParamsStr[ParamStart:].index(']') + ParamStart
       OptParamsArray.append(float(OptParamsStr[ParamStart:ParamStop]))
   OptConfusionMatrix = v2m.PredictExploits(Unexpl, Expl, OptParamsArray, Threshold)
-    
+  OptRiskReduction =   (OptConfusionMatrix[0][0] / (OptConfusionMatrix[0][0] + OptConfusionMatrix[0][1])) - (OptConfusionMatrix[1][0] / (OptConfusionMatrix[1][0] + OptConfusionMatrix[1][1]))
+  
   with open(OutputDir + OutputFile, 'w', newline='') as file:
     outputWriter = csv.writer(file)
-    outputWriter.writerow(['Parameter Set', 'ConfusionMatrix', 'Sensitivity', 'Precision', 'Unexpl ICC', 'Expl ICC', 'Parameters'])
-    outputWriter.writerow(['Original', OriginalConfusionMatrix, v2m.ComputeSensitivity(OriginalConfusionMatrix), v2m.ComputePrecision(OriginalConfusionMatrix), OriginalICCs[0], OriginalICCs[1]] + SearchSpaceStart)
-    outputWriter.writerow(['Optimized', OptConfusionMatrix, v2m.ComputeSensitivity(OptConfusionMatrix), v2m.ComputePrecision(OptConfusionMatrix), OptICCs[0], OptICCs[1]] + OptParamsArray)
+    outputWriter.writerow(['Parameter Set', 'ConfusionMatrix', 'Risk reduction', 'Sensitivity', 'Precision', 'Unexpl ICC', 'Expl ICC', 'Parameters'])
+    outputWriter.writerow(['Original', OriginalConfusionMatrix, OriginalRiskReduction, v2m.ComputeSensitivity(OriginalConfusionMatrix), v2m.ComputePrecision(OriginalConfusionMatrix), OriginalICCs[0], OriginalICCs[1]] + SearchSpaceStart)
+    outputWriter.writerow(['Optimized', OptConfusionMatrix, OptRiskReduction, v2m.ComputeSensitivity(OptConfusionMatrix), v2m.ComputePrecision(OptConfusionMatrix), OptICCs[0], OptICCs[1]] + OptParamsArray)
 
 def OptObjFun(Params, Unexpl, Expl, Threshold):
   
@@ -69,6 +71,8 @@ def OptObjFun(Params, Unexpl, Expl, Threshold):
   F1 = ((1.0 - Precision) + (UnitOverpredictionError)) / 2.0
   F2 = ((1.0 - Sensitivity) + (UnitUnderpredictionError)) / 2.0
   Fmeasure = (F1 + F2*3) / 4.0
+  RiskReduction = (ConfusionMatrix[0][0] / (ConfusionMatrix[0][0] + ConfusionMatrix[0][1])) - (ConfusionMatrix[1][0] / (ConfusionMatrix[1][0] + ConfusionMatrix[1][1]))
+  #Fmeasure = ((1 - RiskReduction) + (UnitUnderpredictionError)) / 2.0
   #Fmeasure = 1 - CompICC
   print("Optimization objective function value: " + str(Fmeasure))
   return (Fmeasure)

@@ -6,7 +6,7 @@ DataDir = 'Data/CVE/'
 SelectFromFile = 'someitems.csv'
 OutputFile = 'randomitems.csv'
 
-NumSelections = 5000
+NumSelections = 1000
 
 # Read all rows from file
 AllRows = []

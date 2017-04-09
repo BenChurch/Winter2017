@@ -134,7 +134,7 @@ def GeneratePlots():
   
   # Generate boxplot of optimized scores
   plt.boxplot([OptUnexploitedScores, OptExploitedScores], [0, 1], widths = 0.6)
-  plt.title('Exploits vs. Optimized Base Score')
+  plt.title('Exploits vs. F-measure Optimized Base Score')
   ax = plt.axes()
   ax.set_xticklabels(['No', 'Yes'])
   ax.set_xlabel('Exploited?')

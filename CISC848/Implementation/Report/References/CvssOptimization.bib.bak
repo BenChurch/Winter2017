@@ -10,6 +10,14 @@
   file =    {:Allodi2014.pdf:PDF}
 }
 
+@Article{Bozorgi2010,
+  author =  {M Bozorgi, LK Saul, S Savage, and GM Voelker},
+  title =   {Beyond Heuristics: Learning to Classify Vulnerabilites and Predict Exploits},
+  journal = {Proceedings of the 16th ACM SIGKDD international conference on Knowledge discovery and data mining},
+  year =    {2010},
+  file =    {:Bozorgi2010.pdf:PDF}
+}
+
 @Article{Khazaei2016,
   author =  {A Khazaei, M Ghasemzadeh, and V Derhami},
   title =   {An automatic method for CVSS score prediction using vulnerabilities description},

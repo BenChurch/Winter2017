@@ -9,7 +9,7 @@ This range of entries is saved in Data/CVE/someitems.csv
 This file is also large, so I have not included it either, but will find a way to share it upon request.
 
 The first python script to use is then selectFromCsv.py
-It selects a user-defined (at the top of the program) number of lines from the someitems.csv files. The lines are selected randomly, subject to non-duplications, and suitability of the entry (it must not be a reserved but unimplemented ID, for example).
+It selects a user-defined (at the top of the program) number of lines from the someitems.csv files. The lines are selected randomly, subject to non-duplication, and suitability of the entry (it must not be a reserved but unimplemented ID, for example).
 These random rows are saved in Data/CVE/randomitems.csv.
 
 With the random set of CVE entries saved in randonitems.csv, the next step is to parse the entries and generate commands which retrieve the NVD entries corresponding to the CVE IDs.
@@ -22,8 +22,6 @@ I have not included these .txt files, again for deliverable size reasons.
 Now that vulnerability IDs, and their base scores (in Data/CVE/txt), are availible, nvd2IdVector.py is run. This script saves the IDs conveniently alongside their base score vectors.
 nvd2IdVector.py generates two csv files: Data/ExploitedIdsVectors.csv and Data/UnexploitedIdsVectors.csv.
 The vulnerability data is now conveniently compartmentalized based on exploitation classification.
-
-With the data represented conveniently as [ID, Base score vector] in csv files, we can begin exploring my actual contribution.
 
 The base score equation parameters are optimized simply by running optimizeParameters.py. The 18 parameters' original values are defined at the top of this file as the search space start.
 The base score threshold for predicting a vulnerability's exploitability (classifying as Exploitable?: Yes/No) is also defined at the top of this program. optimizeParameters.py uses
@@ -39,3 +37,6 @@ optimizeParameters.py also saves the original parameters and their classificatio
 
 With the optimized equation parameters and performance metrics saved, classification improvments can be determined from these results. boxPlot.py reads these results and generates boxplots
 comparing the unexploited class of vulnerabilities' base scores to those of the exploited class. Boxplots are produced for the original and optimized base score equations.
+Further validation of optimized equation performance can be obtained by using the optimized equation parameters to predict exploits in new samples of vulnerabilities. The parameters,
+if saved in IccParameters.csv and fMeasureParameters.csv can be used by predictExploits.py to produce the performance metrics for both, and the original scoring systems.
+predictExploits.py requires that the workflow upto and including nvd2IdVector.py be completed. This differentiates the exploited vulnerabilities from the unexploited.

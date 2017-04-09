@@ -205,7 +205,10 @@ def ComputeMeanOverpredictionError(Unexploited, Params, Threshold):
   
   NormalizedScores = []
   for UnnormalizedScore in UnnormalizedScores:
-    NormalizedScores.append((UnnormalizedScore / MaxScore) * 10.0)
+    if UnnormalizedScore < 0:
+      NormalizedScores.append(0)
+    else:
+      NormalizedScores.append((UnnormalizedScore / MaxScore) * 10.0)
   
   SumOverpredictionError = 0
   for Score in NormalizedScores:
