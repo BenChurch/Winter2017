@@ -70,7 +70,7 @@ def OptObjFun(Params, Unexpl, Expl, Threshold):
   Precision = v2m.ComputePrecision(ConfusionMatrix)
   F1 = ((1.0 - Precision) + (UnitOverpredictionError)) / 2.0
   F2 = ((1.0 - Sensitivity) + (UnitUnderpredictionError)) / 2.0
-  Fmeasure = (F1 + F2*3) / 4.0
+  Fmeasure = (3*F1 + F2) / 4.0
   RiskReduction = (ConfusionMatrix[0][0] / (ConfusionMatrix[0][0] + ConfusionMatrix[0][1])) - (ConfusionMatrix[1][0] / (ConfusionMatrix[1][0] + ConfusionMatrix[1][1]))
   #Fmeasure = ((1 - RiskReduction) + (UnitUnderpredictionError)) / 2.0
   #Fmeasure = 1 - CompICC

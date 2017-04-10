@@ -219,8 +219,24 @@ def ComputeMeanOverpredictionError(Unexploited, Params, Threshold):
   return MeanOverpredictionError
   
 def ComputeMeanUnderpredictionError(Exploited, Params, Threshold):
-  SumUnderpredictionError = 0
+  # First, normalize scores to all be less than 10
+  MaxScore = 10
+  UnnormalizedScores = []
   for Vuln in Exploited:
+    Score = Vector2BaseScore(Vuln[1], Params)
+    UnnormalizedScores.append(Score)
+    if MaxScore < Score:
+      MaxScore = Score
+  
+  NormalizedScores = []
+  for UnnormalizedScore in UnnormalizedScores:
+    if UnnormalizedScore < 0:
+      NormalizedScores.append(0)
+    else:
+      NormalizedScores.append((UnnormalizedScore / MaxScore) * 10.0)
+  
+  SumUnderpredictionError = 0
+  for Score in NormalizedScores:
     Score = Vector2BaseScore(Vuln[1], Params)
     if Score < Threshold:
       SumUnderpredictionError += Threshold - Score
