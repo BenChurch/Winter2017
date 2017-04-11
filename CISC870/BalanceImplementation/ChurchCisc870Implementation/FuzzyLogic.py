@@ -171,20 +171,19 @@ class FuzzyLogic():
       return
       
   def FuzzyImplication(self, AntecedantMembership, ConsequentMembership=1.0, Method=None):
-    if Method == 'KD':
+    if Method == 'KD':  # Kleene-Dienes
       return max(1 - AntecedantMembership, ConsequentMembership)
+    if Method == 'RB':  # Riechenbach
+      return 1 - AntecedantMembership + (AntecedantMembership * ConsequentMembership)
     else:
       print("Error - Unknown FuzzyImplication method")
       return
         
   def ImplicationAntecedant2Consequent(self, AntecedantMembership, ImplicationTruth=1.0, Method=None):
-    # Returns membership of consequent for rule evaluation from AntecedantMembership and the truth of the rule, ImplicationTruth
-    if Method == "KD":
-      if AntecedantMembership == 0:
-        return 0.0001    # Cannot (all) be 0
-      else:
-        # As true as we must make whichever motor output, given the antecedant - assumes ImplicationTruth = 1
-        return AntecedantMembership
+    # Returns membership of consequent for rule (assumedly with a truth of 1) evaluation from AntecedantMembership and the truth of the rule, ImplicationTruth
+    if AntecedantMembership == 0:
+      return 0.0001    # Cannot (all) be 0
     else:
-      print("Error - Unknown FuzzyImplication method")
-      return
+      # As true as we must make whichever motor output, given the antecedant - assumes ImplicationTruth = 1
+      return AntecedantMembership
+    return

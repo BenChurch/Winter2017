@@ -319,8 +319,8 @@ class BalanceBot():
     import matplotlib.pyplot as plt
     import matplotlib.lines as mlines
 
-    fig1name = 'fig1.png'
-    fig2name = 'fig2.png'
+    fig1name = 'Kinematics.png'
+    fig2name = 'AngularDynamics.png'
     
     if 'Kinematics' in Quantities:
       fig1 = plt.figure()

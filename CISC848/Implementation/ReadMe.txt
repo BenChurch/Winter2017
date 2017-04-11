@@ -26,17 +26,15 @@ The vulnerability data is now conveniently compartmentalized based on exploitati
 The base score equation parameters are optimized simply by running optimizeParameters.py. The 18 parameters' original values are defined at the top of this file as the search space start.
 The base score threshold for predicting a vulnerability's exploitability (classifying as Exploitable?: Yes/No) is also defined at the top of this program. optimizeParameters.py uses
 scipy's optimization toolbox's minimize() function on the OptObjFun() function defined in the file. It is in the OptObjFun() where different optimization approaches can be tried. This is where I 
-tried to optimize based on the intra-class correlation coefficient (ICC), sensitivity, precision, and variations on them.
+tried to optimize based on the risk reduction (RR), sensitivity, precision, and variations on them.
 
-These metrics used in optimization are computed with functions imported from vectors2metrics.py, which itself need not be run from the console. First, PredictExploits() should be run
-to generate the confusion matrix for the vulnerabilities given the parameter values and threshold passed to it. Then sensitivity, precision, and ICCs can be computed as per
-formance metrics. The variable'Fmeasure' is computed as the value the minimization algorithm optimizes on. The Fmeasure was used to combine the performance metrics in various ways,
-like a weighted average. The ComputeICC() function may be of interest, as it returns a composite ICC (CompICC), rather than a single one. This is because both the exploited and 
-unexploited classes have their own ICCs, both of which matter, however the optimization is performed on a 1D objective function output. CompICC is computed as an average, weighted based on the subjective values of the different classes' ICCs.
-optimizeParameters.py also saves the original parameters and their classification performance with the corresponding optimized results in optimizationResults.csv.
+These metrics used in optimization are computed with functions imported from vectors2metrics.py, which itself need not be run from the console. First, predictExploits.py should be run
+to generate the confusion matrix for the vulnerabilities given the parameter values and threshold passed to it. Then RR, sensitivity, precision, and ICCs are be computed as performance 
+metrics. The variable'Fmeasure' is computed as the value the minimization algorithm optimizes on. The Fmeasure was used to combine the performance metrics in various ways,
+like a weighted average. optimizeParameters.py also saves the original parameters and their classification performance with the corresponding optimized results in optimizationResults.csv.
 
 With the optimized equation parameters and performance metrics saved, classification improvments can be determined from these results. boxPlot.py reads these results and generates boxplots
 comparing the unexploited class of vulnerabilities' base scores to those of the exploited class. Boxplots are produced for the original and optimized base score equations.
 Further validation of optimized equation performance can be obtained by using the optimized equation parameters to predict exploits in new samples of vulnerabilities. The parameters,
-if saved in IccParameters.csv and fMeasureParameters.csv can be used by predictExploits.py to produce the performance metrics for both, and the original scoring systems.
+if saved in RrParameters.csv and fMeasureParameters.csv can be used by predictExploits.py to produce the performance metrics for both, and the original scoring systems.
 predictExploits.py requires that the workflow upto and including nvd2IdVector.py be completed. This differentiates the exploited vulnerabilities from the unexploited.

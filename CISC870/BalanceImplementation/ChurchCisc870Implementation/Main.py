@@ -1,8 +1,8 @@
 # Main.py runs the simulation, generating the user specified plots as well
 
-# Allowed sNorms: ['max']
-# Allowed tNorms: ['min']
-# Allowed ImplicationMethods: ['KD']
+# Allowed sNorms: ['max', 'a+b-ab', 'min(1,a+b)']
+# Allowed tNorms: ['min', 'ab', 'max(a,a+b-1)']
+# Allowed ImplicationMethods: ['KD' 'RB']   Note that inference of consequent truth given partial antecdant truth and absolute rule truth does not use these methods
 
 # Allowed reference frames for draw bot to file: ['Bot', 'Ground']
 
@@ -12,11 +12,11 @@
 
 from BalanceBot import BalanceBot
 
-sNorm = 'a+b-ab'
+sNorm = 'max'
 tNorm = 'min'
 ImplicationMethod = 'KD'
 
-SimulationIterations = 200
+SimulationIterations = 100
 
 Bot = BalanceBot(1, 20, 0.25, 2, 10)
 
