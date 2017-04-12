@@ -57,6 +57,7 @@
   year =    {2003},
   volume =  {134},
   pages =   {47-64},
+  note =    {Interesting treatment of environemental measurements.},
   file =    {:Cuesta2003.pdf:PDF}
 }
 
@@ -128,6 +129,16 @@
   groups  = {Fuzzy Control Systems},
 }
 
+@Article{Li2015,
+  author =  {X Li, and D Wang},
+  title =   {Behavior-based Mamdani Fuzzy Controller for Mobile Robot Wall-following},
+  journal = {International Conference on Control, Automation and Robotics},
+  year =    {2015},
+  pages =   {78-81},
+  note =    {Specific robot environemental situation allows treatement of fuzzy perception.},
+  file =    {:Li2015.pdf:PDF}
+}
+
 @Article{Memon2016,
   author =  {SF Memon, and IH Kalwar, and I Grout, and E Lewis, and YN Panhwar},
   title =   {Prototype for Localization of Multiple Fire Detecting Robots in a Dynamic Environement},
@@ -179,6 +190,17 @@
   file =    {:Xu2011.pdf:PDF}
 }
 
+@Article{Yang2005,
+  author =  {X Yang, and M Moallem, and RV Patel},
+  title =   {A Layered Goal-Oriented Fuzzy Motion Planning Strategy for Mobile Robot Navigation},
+  journal = {IEEE Transactions on Systems Man and Cybernetics},
+  year =    {2005},
+  volume =  {35},
+  number =  {6},
+  pages =   {1214-1224},
+  file =    {:Yang2005.pdf:PDF}
+}
+
 @Article{Yen1995,
   author  = {J Yen and N Pfluger},
   title   = {A Fuzzy Logic Based Extension to Payton and Rosenblatt's Command Fusion Method for Mobile Robot Navigation},
@@ -198,8 +220,8 @@
 @comment{jabref-meta: groupstree:
 0 AllEntriesGroup:;
 1 ExplicitGroup:Non-Fuzzy\;0\;Arkin1987\;Brooks1986\;Khatib1986\;Memon2016\;Rosenblatt1989\;Xu2011\;;
-1 ExplicitGroup:Fuzzy\;0\;AlYahmedi2011\;Cuesta2003\;Hagras2004\;Leyden1999\;Seraji2002\;Sugeno1985\;Yen1995\;;
-2 ExplicitGroup:Behavior\;0\;;
-2 ExplicitGroup:Modelling\;0\;Seraji2002\;;
-2 ExplicitGroup:Perception\;0\;Cuesta2003\;Sugeno1985\;;
+1 ExplicitGroup:Fuzzy\;0\;AlYahmedi2011\;Cuesta2003\;Hagras2004\;Leyden1999\;Li2015\;Seraji2002\;Sugeno1985\;Yen1995\;;
+2 ExplicitGroup:Behavior\;0\;AlYahmedi2011\;;
+2 ExplicitGroup:Modelling\;0\;Cuesta2003\;Seraji2002\;Yang2005\;;
+2 ExplicitGroup:Perception\;0\;Li2015\;Sugeno1985\;;
 }
